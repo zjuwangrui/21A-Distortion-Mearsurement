@@ -1,15 +1,27 @@
-#include "uart.h"
+#include "bsp/uart.h"
+#include "core/ring.h"
 #include <string.h>
 #include <stdarg.h>
 #include <stdio.h>
+
+/* esp8266 中断处理入口 —— 弱符号缺省实现：
+ * 未链接 drv/esp8266.c 时使用此空壳，避免链接错误。 */
+__attribute__((weak)) void ESP_UART_IRQHandler(void) {}
 
 UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart3;
 
 static char _printf_buf[UART_PRINTF_BUF_SZ];
 
+/* ===== USART1 RX：中断驱动 + 环形缓冲 ===== */
+#define UART1_RX_BUF_SZ  128U           /* 必须是 2 的幂 */
+static uint8_t  s_u1_rx_storage[UART1_RX_BUF_SZ];
+static ring_t   s_u1_rx_ring;
+static uint8_t  s_u1_rx_byte;           /* HAL_UART_Receive_IT 单字节缓存 */
+
 /* ------------------------------------------------------------------ */
 /*  MX_USART1_UART_Init — 调试口  PA9(TX) / PA10(RX)  115200 8N1     */
+/*  开中断，供 terminal 使用                                          */
 /* ------------------------------------------------------------------ */
 void MX_USART1_UART_Init(void)
 {
@@ -38,12 +50,16 @@ void MX_USART1_UART_Init(void)
     huart1.Init.OverSampling = UART_OVERSAMPLING_16;
     if (HAL_UART_Init(&huart1) != HAL_OK)
         while (1);
+
+    ring_init(&s_u1_rx_ring, s_u1_rx_storage, UART1_RX_BUF_SZ);
+
+    HAL_NVIC_SetPriority(USART1_IRQn, 6, 0);
+    HAL_NVIC_EnableIRQ(USART1_IRQn);
+    HAL_UART_Receive_IT(&huart1, &s_u1_rx_byte, 1);
 }
 
 /* ------------------------------------------------------------------ */
 /*  MX_USART3_UART_Init — ESP8266  PB10(TX) / PB11(RX)  115200 8N1   */
-/*  野火指南者板 ESP8266 固定接在 USART3                               */
-/*  开启全局中断，供 HAL_UART_Receive_IT 使用                          */
 /* ------------------------------------------------------------------ */
 void MX_USART3_UART_Init(void)
 {
@@ -116,4 +132,23 @@ uint8_t UART_ReceiveByte(uint32_t timeout_ms)
 HAL_StatusTypeDef UART_ReceiveBytes(uint8_t *buf, uint16_t len, uint32_t timeout_ms)
 {
     return HAL_UART_Receive(&huart1, buf, len, timeout_ms);
+}
+
+bool UART1_RxPop(uint8_t *b)
+{
+    return ring_pop(&s_u1_rx_ring, b);
+}
+
+/* ------------------------------------------------------------------ */
+/*  统一 HAL RxCplt 回调：按外设实例分发                              */
+/*  之前散在 main.c 里，改到这里集中管理                              */
+/* ------------------------------------------------------------------ */
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+    if (huart->Instance == USART1) {
+        ring_push(&s_u1_rx_ring, s_u1_rx_byte);
+        HAL_UART_Receive_IT(&huart1, &s_u1_rx_byte, 1);   /* 立即重装 */
+    } else if (huart->Instance == USART3) {
+        ESP_UART_IRQHandler();
+    }
 }

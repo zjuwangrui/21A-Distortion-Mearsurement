@@ -3,6 +3,7 @@
 
 #include "stm32f1xx_hal.h"
 #include <stdint.h>
+#include <stdbool.h>
 
 #define UART_PRINTF_BUF_SZ 256U
 
@@ -21,5 +22,8 @@ void              UART_SendBytes(const uint8_t *data, uint16_t len);
 int               UART_Printf(const char *fmt, ...);
 uint8_t           UART_ReceiveByte(uint32_t timeout_ms);
 HAL_StatusTypeDef UART_ReceiveBytes(uint8_t *buf, uint16_t len, uint32_t timeout_ms);
+
+/* USART1 非阻塞收字符：由 ISR 塞入环形缓冲，供 terminal 任务消费 */
+bool UART1_RxPop(uint8_t *b);
 
 #endif /* __UART_H */

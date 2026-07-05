@@ -1,5 +1,5 @@
-#include "esp8266.h"
-#include "uart.h"
+#include "drv/esp8266.h"
+#include "bsp/uart.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -133,6 +133,9 @@ static void esp_read_until_idle(char *buf, uint32_t buf_size, uint32_t max_wait_
 
 ESP_Result ESP_Init(void)
 {
+    /* ---- 底层 UART 初始化（幂等，重复调用无副作用） ---- */
+    MX_USART3_UART_Init();
+
     /* ---- 硬件初始化：CH_PD / RST 引脚 ---- */
     __HAL_RCC_GPIOB_CLK_ENABLE();
     GPIO_InitTypeDef gpio = {0};

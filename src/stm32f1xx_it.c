@@ -40,7 +40,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32f1xx_it.h"
-#include "uart.h"   /* huart2 */
+#include "bsp/uart.h"   /* huart1, huart3 */
+#include "bsp/adc.h"    /* hdma_adc1 */
 
 /** @addtogroup STM32F1xx_HAL_Examples
   * @{
@@ -176,10 +177,22 @@ void SysTick_Handler(void)
 {
 }*/
 
+/* USART1 全局中断 — 供 terminal 接收使用 */
+void USART1_IRQHandler(void)
+{
+    HAL_UART_IRQHandler(&huart1);
+}
+
 /* USART3 全局中断 — 供 ESP8266 接收中断使用 */
 void USART3_IRQHandler(void)
 {
     HAL_UART_IRQHandler(&huart3);
+}
+
+/* DMA1 Channel1 — ADC1 高速采样通路 */
+void DMA1_Channel1_IRQHandler(void)
+{
+    HAL_DMA_IRQHandler(&hdma_adc1);
 }
 
 

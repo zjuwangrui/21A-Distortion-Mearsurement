@@ -1,5 +1,5 @@
 #include "stm32f1xx_hal.h"
-#include "uart.h"
+#include "bsp/uart.h"
 
 /* ------------------------------------------------------------------ */
 /*  LED — PB0, active low                                              */
@@ -39,12 +39,12 @@ int main(void)
 {
     HAL_Init();
     SystemClock_Config();
-    UART_Init();
+    MX_USART1_UART_Init();
 
     /* Startup banner */
     UART_SendString("\r\n");
     UART_SendString("============================================\r\n");
-    UART_SendString("  VTL Sensor System  —  UART Test\r\n");
+    UART_SendString("  STM32 App Framework  —  UART Test\r\n");
     UART_SendString("  Board : Wildfire Guide  (STM32F103VE)\r\n");
     UART_SendString("  USART1: PA9(TX) / PA10(RX)  115200 8N1\r\n");
     UART_SendString("============================================\r\n");

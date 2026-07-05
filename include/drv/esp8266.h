@@ -2,7 +2,7 @@
 #define __ESP8266_H
 
 #include "stm32f1xx_hal.h"
-#include "uart.h"
+#include "bsp/uart.h"
 #include <stdbool.h>
 
 /* ===== 用户配置（按实际环境修改） ===== */
