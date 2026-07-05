@@ -1,0 +1,9 @@
+<Resource>
+    <pages>
+        <page name="Screen0" id="0" />
+    </pages>
+    <images>
+        <image id="0" url="c:\users\12274\documents\tencent files\1227400954\filerecv\project (1)\images\background1.png" effect_width="1024" effect_height="600" />
+    </images>
+    <waves />
+</Resource>

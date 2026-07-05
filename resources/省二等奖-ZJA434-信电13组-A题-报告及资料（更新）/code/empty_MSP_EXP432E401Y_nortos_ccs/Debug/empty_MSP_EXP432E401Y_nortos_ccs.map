@@ -1,0 +1,982 @@
+******************************************************************************
+                  TI ARM Linker PC v20.2.5                     
+******************************************************************************
+>> Linked Sun Nov  7 17:58:40 2021
+
+OUTPUT FILE NAME:   <empty_MSP_EXP432E401Y_nortos_ccs.out>
+ENTRY POINT SYMBOL: "_c_int00_noargs"  address: 00005efd
+
+
+MEMORY CONFIGURATION
+
+         name            origin    length      used     unused   attr    fill
+----------------------  --------  ---------  --------  --------  ----  --------
+  FLASH                 00000000   00100000  00007460  000f8ba0  R  X
+  SRAM                  20000000   00040000  0000b231  00034dcf  RW X
+
+
+SEGMENT ALLOCATION MAP
+
+run origin  load origin   length   init length attrs members
+----------  ----------- ---------- ----------- ----- -------
+00000000    00000000    00007460   00007460    r-x
+  00000000    00000000    00000208   00000208    r-- .intvecs
+  00000208    00000208    00005e38   00005e38    r-x .text
+  00006040    00006040    000013c0   000013c0    r-- .const
+  00007400    00007400    00000060   00000060    r-- .cinit
+20000000    20000000    0000b238   00000000    rw-
+  20000000    20000000    0000a1a9   00000000    rw- .bss
+  2000a1b0    2000a1b0    00001000   00000000    rw- .stack
+  2000b1b0    2000b1b0    00000088   00000000    rw- .data
+
+
+SECTION ALLOCATION MAP
+
+ output                                  attributes/
+section   page    origin      length       input sections
+--------  ----  ----------  ----------   ----------------
+.intvecs   0    00000000    00000208     
+                  00000000    00000208     startup_msp432e401y_ccs.obj (.intvecs:retain)
+
+.text      0    00000208    00005e38     
+                  00000208    00002088     main.obj (.text:main)
+                  00002290    00000738     rtsv7M4_T_le_v4SPD16_eabi.lib : k_rem_pio2.c.obj (.text:__kernel_rem_pio2)
+                  000029c8    0000067c     main.obj (.text:kfft)
+                  00003044    000005e0     rtsv7M4_T_le_v4SPD16_eabi.lib : s_sin.c.obj (.text:sin)
+                  00003624    000005dc                                   : s_cos.c.obj (.text:cos)
+                  00003c00    0000030c     uartstdio.obj (.text:UARTvprintf)
+                  00003f0c    000002e0     msp432e4_driverlib.a : sysctl.o (.text:SysCtlClockFreqSet)
+                  000041ec    000001f4     Goertzel.obj (.text:Goertzel_Mag)
+                  000043e0    000001b6     rtsv7M4_T_le_v4SPD16_eabi.lib : fd_add_t2.asm.obj (.text)
+                  00004596    00000002     startup_msp432e401y_ccs.obj (.text:Default_Handler)
+                  00004598    000001a4     main.obj (.text:getADCBuffer)
+                  0000473c    000001a4     main.obj (.text:getFFTIBuffer)
+                  000048e0    000001a4     main.obj (.text:getFFTRBuffer)
+                  00004a84    000001a4     main.obj (.text:getVIBuffer)
+                  00004c28    000001a4     main.obj (.text:getVRBuffer)
+                  00004dcc    00000174     rtsv7M4_T_le_v4SPD16_eabi.lib : k_sin.c.obj (.text:__kernel_sin)
+                  00004f40    00000170                                   : k_cos.c.obj (.text:__kernel_cos)
+                  000050b0    00000158                                   : e_sqrt.c.obj (.text:sqrt)
+                  00005208    00000136                                   : fd_div_t2.asm.obj (.text)
+                  0000533e    00000002                                   : div0.asm.obj (.text)
+                  00005340    00000110                                   : s_scalbn.c.obj (.text:scalbn)
+                  00005450    000000fc                                   : fd_mul_t2.asm.obj (.text)
+                  0000554c    000000f8                                   : s_floor.c.obj (.text:floor)
+                  00005644    000000ee     msp432e4_driverlib.a : adc.o (.text:ADCSequenceStepConfigure)
+                  00005732    0000009c     rtsv7M4_T_le_v4SPD16_eabi.lib : memcpy_t2.asm.obj (.text)
+                  000057ce    00000002     --HOLE-- [fill = 0]
+                  000057d0    00000090     msp432e4_driverlib.a : sysctl.o (.text:_SysCtlFrequencyGet)
+                  00005860    00000086     rtsv7M4_T_le_v4SPD16_eabi.lib : fd_cmp_t2.asm.obj (.text:__aeabi_cdcmple)
+                  000058e6    00000086                                   : fd_cmp_t2.asm.obj (.text:__aeabi_cdrcmple)
+                  0000596c    00000080     main.obj (.text:ADC0SS3_IRQHandler)
+                  000059ec    0000007a     rtsv7M4_T_le_v4SPD16_eabi.lib : memset_t2.asm.obj (.text)
+                  00005a66    00000002     --HOLE-- [fill = 0]
+                  00005a68    00000074     uartstdio.obj (.text:UARTStdioConfig)
+                  00005adc    00000070     rtsv7M4_T_le_v4SPD16_eabi.lib : fd_toll_t2.asm.obj (.text)
+                  00005b4c    00000068                                   : copy_decompress_lzss.c.obj (.text:decompress:lzss:__TI_decompress_lzss)
+                  00005bb4    00000060     main.obj (.text:ConfigureUART2)
+                  00005c14    00000060     main.obj (.text:ConfigureUART7)
+                  00005c74    00000060     msp432e4_driverlib.a : timer.o (.text:TimerControlTrigger)
+                  00005cd4    0000005c     uartstdio.obj (.text:UARTwrite)
+                  00005d30    00000048     rtsv7M4_T_le_v4SPD16_eabi.lib : fd_toi_t2.asm.obj (.text)
+                  00005d78    00000044     msp432e4_driverlib.a : sysctl.o (.text:SysCtlPeripheralReady)
+                  00005dbc    00000044                          : sysctl.o (.text:_SysCtlMemTimingGet)
+                  00005e00    00000044     rtsv7M4_T_le_v4SPD16_eabi.lib : autoinit.c.obj (.text:__TI_auto_init_nobinit_nopinit:__TI_auto_init_nobinit_nopinit)
+                  00005e44    00000040                                   : ll_tofd_t2.asm.obj (.text)
+                  00005e84    00000040                                   : u_divt2.asm.obj (.text)
+                  00005ec4    00000038                                   : fs_tod_t2.asm.obj (.text)
+                  00005efc    00000034                                   : boot_cortex_m.c.obj (.text:_c_int00_noargs:_c_int00_noargs)
+                  00005f30    0000002e                                   : i_tofd_t2.asm.obj (.text)
+                  00005f5e    00000024     uartstdio.obj (.text:UARTprintf)
+                  00005f82    00000002     --HOLE-- [fill = 0]
+                  00005f84    00000020     system_msp432e401y.obj (.text:SystemInit)
+                  00005fa4    00000020     rtsv7M4_T_le_v4SPD16_eabi.lib : u_tofd_t2.asm.obj (.text)
+                  00005fc4    0000001a                                   : s_copysign.c.obj (.text:copysign)
+                  00005fde    00000018                                   : ll_mul_t2.asm.obj (.text)
+                  00005ff6    00000012     msp432e4_driverlib.a : adc.o (.text:ADCIntClearEx)
+                  00006008    0000000e     rtsv7M4_T_le_v4SPD16_eabi.lib : copy_decompress_none.c.obj (.text:decompress:none:__TI_decompress_none)
+                  00006016    0000000c     startup_msp432e401y_ccs.obj (.text:Reset_Handler)
+                  00006022    0000000c     rtsv7M4_T_le_v4SPD16_eabi.lib : copy_zero_init.c.obj (.text:decompress:ZI:__TI_zero_init)
+                  0000602e    00000002     --HOLE-- [fill = 0]
+                  00006030    00000008                                   : errno.c.obj (.text:__aeabi_errno_addr)
+                  00006038    00000004                                   : pre_init.c.obj (.text:_system_pre_init)
+                  0000603c    00000004                                   : exit.c.obj (.text:abort:abort)
+
+.const     0    00006040    000013c0     
+                  00006040    00001000     window.obj (.const:hanning_1024)
+                  00007040    000001b0     msp432e4_driverlib.a : sysctl.o (.const:g_pppui32XTALtoVCO)
+                  000071f0    00000158     rtsv7M4_T_le_v4SPD16_eabi.lib : k_rem_pio2.c.obj (.const:$O1$$)
+                  00007348    00000030     msp432e4_driverlib.a : sysctl.o (.const:g_sXTALtoMEMTIM)
+                  00007378    00000028                          : sysctl.o (.const:g_pui32Xtals)
+                  000073a0    00000020     uartstdio.obj (.const:g_ui32UARTBase)
+                  000073c0    00000020     uartstdio.obj (.const:g_ui32UARTPeriph)
+                  000073e0    00000012     uartstdio.obj (.const:.string)
+                  000073f2    00000002     --HOLE-- [fill = 0]
+                  000073f4    00000008     msp432e4_driverlib.a : sysctl.o (.const:g_pui32VCOFrequencies)
+                  000073fc    00000004     uartstdio.obj (.const)
+
+.cinit     0    00007400    00000060     
+                  00007400    00000035     (.cinit..data.load) [load image, compression = lzss]
+                  00007435    00000003     --HOLE-- [fill = 0]
+                  00007438    0000000c     (__TI_handler_table)
+                  00007444    00000004     --HOLE-- [fill = 0]
+                  00007448    00000008     (.cinit..bss.load) [load image, compression = zero_init]
+                  00007450    00000010     (__TI_cinit_table)
+
+.init_array 
+*          0    00000000    00000000     UNINITIALIZED
+
+.bss       0    20000000    0000a1a9     UNINITIALIZED
+                  20000000    00000800     (.common:ADCBuffer)
+                  20000800    00000400     (.common:pui8ControlTable)
+                  20000c00    00000400     (.common:sig_out)
+                  20001000    00000200     (.common:FFTIBuffer0)
+                  20001200    00000200     (.common:FFTIBuffer1)
+                  20001400    00000200     (.common:FFTIBuffer2)
+                  20001600    00000200     (.common:FFTIBuffer3)
+                  20001800    00000200     (.common:FFTIBuffer4)
+                  20001a00    00000200     (.common:FFTIBuffer5)
+                  20001c00    00000200     (.common:FFTIBuffer6)
+                  20001e00    00000200     (.common:FFTIBuffer7)
+                  20002000    00000200     (.common:FFTIBuffer8)
+                  20002200    00000200     (.common:FFTIBuffer9)
+                  20002400    00000200     (.common:FFTIBuffera)
+                  20002600    00000200     (.common:FFTIBufferb)
+                  20002800    00000200     (.common:FFTIBufferc)
+                  20002a00    00000200     (.common:FFTIBufferd)
+                  20002c00    00000200     (.common:FFTIBuffere)
+                  20002e00    00000200     (.common:FFTIBufferf)
+                  20003000    00000200     (.common:FFTRBuffer0)
+                  20003200    00000200     (.common:FFTRBuffer1)
+                  20003400    00000200     (.common:FFTRBuffer2)
+                  20003600    00000200     (.common:FFTRBuffer3)
+                  20003800    00000200     (.common:FFTRBuffer4)
+                  20003a00    00000200     (.common:FFTRBuffer5)
+                  20003c00    00000200     (.common:FFTRBuffer6)
+                  20003e00    00000200     (.common:FFTRBuffer7)
+                  20004000    00000200     (.common:FFTRBuffer8)
+                  20004200    00000200     (.common:FFTRBuffer9)
+                  20004400    00000200     (.common:FFTRBuffera)
+                  20004600    00000200     (.common:FFTRBufferb)
+                  20004800    00000200     (.common:FFTRBufferc)
+                  20004a00    00000200     (.common:FFTRBufferd)
+                  20004c00    00000200     (.common:FFTRBuffere)
+                  20004e00    00000200     (.common:FFTRBufferf)
+                  20005000    00000200     (.common:VIBuffer0)
+                  20005200    00000200     (.common:VIBuffer1)
+                  20005400    00000200     (.common:VIBuffer2)
+                  20005600    00000200     (.common:VIBuffer3)
+                  20005800    00000200     (.common:VIBuffer4)
+                  20005a00    00000200     (.common:VIBuffer5)
+                  20005c00    00000200     (.common:VIBuffer6)
+                  20005e00    00000200     (.common:VIBuffer7)
+                  20006000    00000200     (.common:VIBuffer8)
+                  20006200    00000200     (.common:VIBuffer9)
+                  20006400    00000200     (.common:VIBuffera)
+                  20006600    00000200     (.common:VIBufferb)
+                  20006800    00000200     (.common:VIBufferc)
+                  20006a00    00000200     (.common:VIBufferd)
+                  20006c00    00000200     (.common:VIBuffere)
+                  20006e00    00000200     (.common:VIBufferf)
+                  20007000    00000200     (.common:VRBuffer0)
+                  20007200    00000200     (.common:VRBuffer1)
+                  20007400    00000200     (.common:VRBuffer2)
+                  20007600    00000200     (.common:VRBuffer3)
+                  20007800    00000200     (.common:VRBuffer4)
+                  20007a00    00000200     (.common:VRBuffer5)
+                  20007c00    00000200     (.common:VRBuffer6)
+                  20007e00    00000200     (.common:VRBuffer7)
+                  20008000    00000200     (.common:VRBuffer8)
+                  20008200    00000200     (.common:VRBuffer9)
+                  20008400    00000200     (.common:VRBuffera)
+                  20008600    00000200     (.common:VRBufferb)
+                  20008800    00000200     (.common:VRBufferc)
+                  20008a00    00000200     (.common:VRBufferd)
+                  20008c00    00000200     (.common:VRBuffere)
+                  20008e00    00000200     (.common:VRBufferf)
+                  20009000    00000100     (.common:ADCBuffer0)
+                  20009100    00000100     (.common:ADCBuffer1)
+                  20009200    00000100     (.common:ADCBuffer2)
+                  20009300    00000100     (.common:ADCBuffer3)
+                  20009400    00000100     (.common:ADCBuffer4)
+                  20009500    00000100     (.common:ADCBuffer5)
+                  20009600    00000100     (.common:ADCBuffer6)
+                  20009700    00000100     (.common:ADCBuffer7)
+                  20009800    00000100     (.common:ADCBuffer8)
+                  20009900    00000100     (.common:ADCBuffer9)
+                  20009a00    00000100     (.common:ADCBuffera)
+                  20009b00    00000100     (.common:ADCBufferb)
+                  20009c00    00000100     (.common:ADCBufferc)
+                  20009d00    00000100     (.common:ADCBufferd)
+                  20009e00    00000100     (.common:ADCBuffere)
+                  20009f00    00000100     (.common:ADCBufferf)
+                  2000a000    000000a8     (.common:f_test)
+                  2000a0a8    000000a8     (.common:mag_test)
+                  2000a150    00000028     (.common:mag_out)
+                  2000a178    00000008     (.common:THD)
+                  2000a180    00000008     (.common:THD_out)
+                  2000a188    00000008     (.common:f_in)
+                  2000a190    00000008     (.common:f_out)
+                  2000a198    00000008     (.common:mag_test_max)
+                  2000a1a0    00000004     (.common:getDCVoltage)
+                  2000a1a4    00000004     (.common:mag_test_i)
+                  2000a1a8    00000001     (.common:uart_temp)
+
+.data      0    2000b1b0    00000088     UNINITIALIZED
+                  2000b1b0    00000078     main.obj (.data)
+                  2000b228    00000005     uartstdio.obj (.data)
+                  2000b22d    00000003     --HOLE--
+                  2000b230    00000004     rtsv7M4_T_le_v4SPD16_eabi.lib : errno.c.obj (.data)
+                  2000b234    00000004     system_msp432e401y.obj (.data)
+
+.stack     0    2000a1b0    00001000     UNINITIALIZED
+                  2000a1b0    00000004     rtsv7M4_T_le_v4SPD16_eabi.lib : boot_cortex_m.c.obj (.stack)
+                  2000a1b4    00000ffc     --HOLE--
+
+__llvm_prf_cnts 
+*          0    20000000    00000000     UNINITIALIZED
+
+MODULE SUMMARY
+
+       Module                        code    ro data   rw data
+       ------                        ----    -------   -------
+    .\
+       main.obj                      12408   0         41505  
+       uartstdio.obj                 1024    86        5      
+       system_msp432e401y.obj        32      0         4      
+    +--+-----------------------------+-------+---------+---------+
+       Total:                        13464   86        41514  
+                                                              
+    .\Goertzel\
+       Goertzel.obj                  500     0         0      
+    +--+-----------------------------+-------+---------+---------+
+       Total:                        500     0         0      
+                                                              
+    .\ccs\
+       startup_msp432e401y_ccs.obj   14      520       0      
+    +--+-----------------------------+-------+---------+---------+
+       Total:                        14      520       0      
+                                                              
+    .\window\Src\
+       window.obj                    0       4096      0      
+    +--+-----------------------------+-------+---------+---------+
+       Total:                        0       4096      0      
+                                                              
+    C:/ti/msp/simplelink_msp432e4_sdk_4_20_00_12/source/ti/devices/msp432e4/driverlib/lib/ccs/m4f/msp432e4_driverlib.a
+       sysctl.o                      1016    528       0      
+       adc.o                         256     0         0      
+       timer.o                       96      0         0      
+    +--+-----------------------------+-------+---------+---------+
+       Total:                        1368    528       0      
+                                                              
+    C:\ti\ccs1100\ccs\tools\compiler\ti-cgt-arm_20.2.5.LTS\lib\rtsv7M4_T_le_v4SPD16_eabi.lib
+       k_rem_pio2.c.obj              1848    344       0      
+       s_sin.c.obj                   1504    0         0      
+       s_cos.c.obj                   1500    0         0      
+       fd_add_t2.asm.obj             438     0         0      
+       k_sin.c.obj                   372     0         0      
+       k_cos.c.obj                   368     0         0      
+       e_sqrt.c.obj                  344     0         0      
+       fd_div_t2.asm.obj             310     0         0      
+       s_scalbn.c.obj                272     0         0      
+       fd_cmp_t2.asm.obj             268     0         0      
+       fd_mul_t2.asm.obj             252     0         0      
+       s_floor.c.obj                 248     0         0      
+       memcpy_t2.asm.obj             156     0         0      
+       memset_t2.asm.obj             122     0         0      
+       fd_toll_t2.asm.obj            112     0         0      
+       copy_decompress_lzss.c.obj    104     0         0      
+       fd_toi_t2.asm.obj             72      0         0      
+       autoinit.c.obj                68      0         0      
+       ll_tofd_t2.asm.obj            64      0         0      
+       u_divt2.asm.obj               64      0         0      
+       fs_tod_t2.asm.obj             56      0         0      
+       boot_cortex_m.c.obj           52      0         0      
+       i_tofd_t2.asm.obj             46      0         0      
+       u_tofd_t2.asm.obj             32      0         0      
+       s_copysign.c.obj              26      0         0      
+       ll_mul_t2.asm.obj             24      0         0      
+       copy_decompress_none.c.obj    14      0         0      
+       copy_zero_init.c.obj          12      0         0      
+       errno.c.obj                   8       0         4      
+       exit.c.obj                    4       0         0      
+       pre_init.c.obj                4       0         0      
+       div0.asm.obj                  2       0         0      
+    +--+-----------------------------+-------+---------+---------+
+       Total:                        8766    344       4      
+                                                              
+       Stack:                        0       0         4096   
+       Linker Generated:             0       89        0      
+    +--+-----------------------------+-------+---------+---------+
+       Grand Total:                  24112   5663      45614  
+
+
+LINKER GENERATED COPY TABLES
+
+__TI_cinit_table @ 00007450 records: 2, size/record: 8, table size: 16
+	.data: load addr=00007400, load size=00000035 bytes, run addr=2000b1b0, run size=00000088 bytes, compression=lzss
+	.bss: load addr=00007448, load size=00000008 bytes, run addr=20000000, run size=0000a1a9 bytes, compression=zero_init
+
+
+LINKER GENERATED HANDLER TABLE
+
+__TI_handler_table @ 00007438 records: 3, size/record: 4, table size: 12
+	index: 0, handler: __TI_decompress_lzss
+	index: 1, handler: __TI_decompress_none
+	index: 2, handler: __TI_zero_init
+
+
+GLOBAL SYMBOLS: SORTED ALPHABETICALLY BY Name 
+
+address   name                          
+-------   ----                          
+00004597  ADC0SS0_IRQHandler            
+00004597  ADC0SS1_IRQHandler            
+00004597  ADC0SS2_IRQHandler            
+0000596d  ADC0SS3_IRQHandler            
+0000596d  ADC0SS3_IRQHandler            
+00004597  ADC1SS0_IRQHandler            
+00004597  ADC1SS1_IRQHandler            
+00004597  ADC1SS2_IRQHandler            
+00004597  ADC1SS3_IRQHandler            
+20000000  ADCBuffer                     
+20009000  ADCBuffer0                    
+20009100  ADCBuffer1                    
+20009200  ADCBuffer2                    
+20009300  ADCBuffer3                    
+20009400  ADCBuffer4                    
+20009500  ADCBuffer5                    
+20009600  ADCBuffer6                    
+20009700  ADCBuffer7                    
+20009800  ADCBuffer8                    
+20009900  ADCBuffer9                    
+20009a00  ADCBuffera                    
+20009b00  ADCBufferb                    
+20009c00  ADCBufferc                    
+20009d00  ADCBufferd                    
+20009e00  ADCBuffere                    
+20009f00  ADCBufferf                    
+00005ff7  ADCIntClearEx                 
+00005645  ADCSequenceStepConfigure      
+00004597  AES0_IRQHandler               
+00004597  BusFault_Handler              
+0000603d  C$$EXIT                       
+00004597  CAN0_IRQHandler               
+00004597  CAN1_IRQHandler               
+00004597  COMP0_IRQHandler              
+00004597  COMP1_IRQHandler              
+00004597  COMP2_IRQHandler              
+00005bb5  ConfigureUART2                
+00005c15  ConfigureUART7                
+00004597  DES0_IRQHandler               
+00004597  DebugMon_Handler              
+00004597  Default_Handler               
+00004597  EMAC0_IRQHandler              
+00004597  EPI0_IRQHandler               
+20001000  FFTIBuffer0                   
+20001200  FFTIBuffer1                   
+20001400  FFTIBuffer2                   
+20001600  FFTIBuffer3                   
+20001800  FFTIBuffer4                   
+20001a00  FFTIBuffer5                   
+20001c00  FFTIBuffer6                   
+20001e00  FFTIBuffer7                   
+20002000  FFTIBuffer8                   
+20002200  FFTIBuffer9                   
+20002400  FFTIBuffera                   
+20002600  FFTIBufferb                   
+20002800  FFTIBufferc                   
+20002a00  FFTIBufferd                   
+20002c00  FFTIBuffere                   
+20002e00  FFTIBufferf                   
+20003000  FFTRBuffer0                   
+20003200  FFTRBuffer1                   
+20003400  FFTRBuffer2                   
+20003600  FFTRBuffer3                   
+20003800  FFTRBuffer4                   
+20003a00  FFTRBuffer5                   
+20003c00  FFTRBuffer6                   
+20003e00  FFTRBuffer7                   
+20004000  FFTRBuffer8                   
+20004200  FFTRBuffer9                   
+20004400  FFTRBuffera                   
+20004600  FFTRBufferb                   
+20004800  FFTRBufferc                   
+20004a00  FFTRBufferd                   
+20004c00  FFTRBuffere                   
+20004e00  FFTRBufferf                   
+00004597  FLASH_IRQHandler              
+00004597  GPIOA_IRQHandler              
+00004597  GPIOB_IRQHandler              
+00004597  GPIOC_IRQHandler              
+00004597  GPIOD_IRQHandler              
+00004597  GPIOE_IRQHandler              
+00004597  GPIOF_IRQHandler              
+00004597  GPIOG_IRQHandler              
+00004597  GPIOH_IRQHandler              
+00004597  GPIOJ_IRQHandler              
+00004597  GPIOK_IRQHandler              
+00004597  GPIOL_IRQHandler              
+00004597  GPIOM_IRQHandler              
+00004597  GPION_IRQHandler              
+00004597  GPIOP0_IRQHandler             
+00004597  GPIOP1_IRQHandler             
+00004597  GPIOP2_IRQHandler             
+00004597  GPIOP3_IRQHandler             
+00004597  GPIOP4_IRQHandler             
+00004597  GPIOP5_IRQHandler             
+00004597  GPIOP6_IRQHandler             
+00004597  GPIOP7_IRQHandler             
+00004597  GPIOQ0_IRQHandler             
+00004597  GPIOQ1_IRQHandler             
+00004597  GPIOQ2_IRQHandler             
+00004597  GPIOQ3_IRQHandler             
+00004597  GPIOQ4_IRQHandler             
+00004597  GPIOQ5_IRQHandler             
+00004597  GPIOQ6_IRQHandler             
+00004597  GPIOQ7_IRQHandler             
+000041ed  Goertzel_Mag                  
+00004597  HIBERNATE_IRQHandler          
+00004597  HardFault_Handler             
+00004597  I2C0_IRQHandler               
+00004597  I2C1_IRQHandler               
+00004597  I2C2_IRQHandler               
+00004597  I2C3_IRQHandler               
+00004597  I2C4_IRQHandler               
+00004597  I2C5_IRQHandler               
+00004597  I2C6_IRQHandler               
+00004597  I2C7_IRQHandler               
+00004597  I2C8_IRQHandler               
+00004597  I2C9_IRQHandler               
+00004597  MemManage_Handler             
+00004597  NMI_Handler                   
+00004597  PWM0_0_IRQHandler             
+00004597  PWM0_1_IRQHandler             
+00004597  PWM0_2_IRQHandler             
+00004597  PWM0_3_IRQHandler             
+00004597  PWM0_FAULT_IRQHandler         
+00004597  PendSV_Handler                
+00004597  QEI0_IRQHandler               
+00006017  Reset_Handler                 
+00004597  SHA0_IRQHandler               
+00004597  SSI0_IRQHandler               
+00004597  SSI1_IRQHandler               
+00004597  SSI2_IRQHandler               
+00004597  SSI3_IRQHandler               
+00004597  SVC_Handler                   
+00004597  SYSCTL_IRQHandler             
+00004597  SYSEXC_IRQHandler             
+00003f0d  SysCtlClockFreqSet            
+00005d79  SysCtlPeripheralReady         
+00004597  SysTick_Handler               
+2000b234  SystemCoreClock               
+00005f85  SystemInit                    
+00004597  TAMPER0_IRQHandler            
+2000a178  THD                           
+2000a180  THD_out                       
+00004597  TIMER0A_IRQHandler            
+00004597  TIMER0B_IRQHandler            
+00004597  TIMER1A_IRQHandler            
+00004597  TIMER1B_IRQHandler            
+00004597  TIMER2A_IRQHandler            
+00004597  TIMER2B_IRQHandler            
+00004597  TIMER3A_IRQHandler            
+00004597  TIMER3B_IRQHandler            
+00004597  TIMER4A_IRQHandler            
+00004597  TIMER4B_IRQHandler            
+00004597  TIMER5A_IRQHandler            
+00004597  TIMER5B_IRQHandler            
+00004597  TIMER6A_IRQHandler            
+00004597  TIMER6B_IRQHandler            
+00004597  TIMER7A_IRQHandler            
+00004597  TIMER7B_IRQHandler            
+00005c75  TimerControlTrigger           
+00004597  UART0_IRQHandler              
+00004597  UART1_IRQHandler              
+00004597  UART2_IRQHandler              
+00004597  UART3_IRQHandler              
+00004597  UART4_IRQHandler              
+00004597  UART5_IRQHandler              
+00004597  UART6_IRQHandler              
+00004597  UART7_IRQHandler              
+00005a69  UARTStdioConfig               
+00005f5f  UARTprintf                    
+00003c01  UARTvprintf                   
+00005cd5  UARTwrite                     
+00004597  UDMAERR_IRQHandler            
+00004597  UDMA_IRQHandler               
+00004597  USB0_IRQHandler               
+00004597  UsageFault_Handler            
+20005000  VIBuffer0                     
+20005200  VIBuffer1                     
+20005400  VIBuffer2                     
+20005600  VIBuffer3                     
+20005800  VIBuffer4                     
+20005a00  VIBuffer5                     
+20005c00  VIBuffer6                     
+20005e00  VIBuffer7                     
+20006000  VIBuffer8                     
+20006200  VIBuffer9                     
+20006400  VIBuffera                     
+20006600  VIBufferb                     
+20006800  VIBufferc                     
+20006a00  VIBufferd                     
+20006c00  VIBuffere                     
+20006e00  VIBufferf                     
+20007000  VRBuffer0                     
+20007200  VRBuffer1                     
+20007400  VRBuffer2                     
+20007600  VRBuffer3                     
+20007800  VRBuffer4                     
+20007a00  VRBuffer5                     
+20007c00  VRBuffer6                     
+20007e00  VRBuffer7                     
+20008000  VRBuffer8                     
+20008200  VRBuffer9                     
+20008400  VRBuffera                     
+20008600  VRBufferb                     
+20008800  VRBufferc                     
+20008a00  VRBufferd                     
+20008c00  VRBuffere                     
+20008e00  VRBufferf                     
+00004597  WATCHDOG_IRQHandler           
+2000b1b0  __STACK_END                   
+00001000  __STACK_SIZE                  
+2000a3b0  __STACK_TOP                   
+00007450  __TI_CINIT_Base               
+00007460  __TI_CINIT_Limit              
+00007438  __TI_Handler_Table_Base       
+00007444  __TI_Handler_Table_Limit      
+00005e01  __TI_auto_init_nobinit_nopinit
+00005b4d  __TI_decompress_lzss          
+00006009  __TI_decompress_none          
+ffffffff  __TI_pprof_out_hndl           
+ffffffff  __TI_prof_data_size           
+ffffffff  __TI_prof_data_start          
+00000000  __TI_static_base__            
+00006023  __TI_zero_init                
+00005861  __aeabi_cdcmpeq               
+00005861  __aeabi_cdcmple               
+000058e7  __aeabi_cdrcmple              
+00005d31  __aeabi_d2iz                  
+00005add  __aeabi_d2lz                  
+000043eb  __aeabi_dadd                  
+00005209  __aeabi_ddiv                  
+00005451  __aeabi_dmul                  
+000043e1  __aeabi_dsub                  
+00006031  __aeabi_errno_addr            
+00005ec5  __aeabi_f2d                   
+00005f31  __aeabi_i2d                   
+0000533f  __aeabi_idiv0                 
+00005e45  __aeabi_l2d                   
+0000533f  __aeabi_ldiv0                 
+00005fdf  __aeabi_lmul                  
+000059ed  __aeabi_memclr                
+000059ed  __aeabi_memclr4               
+000059ed  __aeabi_memclr8               
+00005733  __aeabi_memcpy                
+00005733  __aeabi_memcpy4               
+00005733  __aeabi_memcpy8               
+000059ef  __aeabi_memset                
+000059ef  __aeabi_memset4               
+000059ef  __aeabi_memset8               
+00005fa5  __aeabi_ui2d                  
+00005e85  __aeabi_uidiv                 
+00005e85  __aeabi_uidivmod              
+ffffffff  __binit__                     
+ffffffff  __c_args__                    
+00004f41  __kernel_cos                  
+00002291  __kernel_rem_pio2             
+00004dcd  __kernel_sin                  
+UNDEFED   __mpu_init                    
+2000a1b0  __stack                       
+20000000  __start___llvm_prf_cnts       
+20000000  __stop___llvm_prf_cnts        
+00005efd  _c_int00_noargs               
+UNDEFED   _system_post_cinit            
+00006039  _system_pre_init              
+0000603d  abort                         
+ffffffff  binit                         
+2000b21c  circle_count                  
+00005fc5  copysign                      
+00005fc5  copysignl                     
+00003625  cos                           
+00003625  cosl                          
+2000b230  errno                         
+2000a188  f_in                          
+2000a190  f_out                         
+2000a000  f_test                        
+0000554d  floor                         
+0000554d  floorl                        
+00004599  getADCBuffer                  
+2000a1a0  getDCVoltage                  
+0000473d  getFFTIBuffer                 
+000048e1  getFFTRBuffer                 
+00004a85  getVIBuffer                   
+00004c29  getVRBuffer                   
+00006040  hanning_1024                  
+00000000  interruptVectors              
+000029c9  kfft                          
+00005341  ldexp                         
+00005341  ldexpl                        
+2000b210  mag_amp                       
+2000a150  mag_out                       
+2000a0a8  mag_test                      
+2000a1a4  mag_test_i                    
+2000a198  mag_test_max                  
+2000b1f0  magmax                        
+2000b1f8  magmax_i                      
+00000209  main                          
+00005733  memcpy                        
+000059f5  memset                        
+20000800  pui8ControlTable              
+2000b220  sample_rate                   
+00005341  scalbn                        
+00005341  scalbnl                       
+2000b1b0  sig_max                       
+2000b1b8  sig_min                       
+20000c00  sig_out                       
+2000b1c0  sig_pp                        
+00003045  sin                           
+00003045  sinl                          
+000050b1  sqrt                          
+000050b1  sqrtl                         
+2000b21a  transfer_count                
+2000b218  transfer_flag                 
+2000a1a8  uart_temp                     
+2000b1c8  v_ave                         
+2000b200  v_dc                          
+2000b1d8  vmax                          
+2000b1e8  vmax_i                        
+2000b1d0  vmin                          
+2000b1e0  vpp                           
+2000b208  vv_temp                       
+
+
+GLOBAL SYMBOLS: SORTED BY Symbol Address 
+
+address   name                          
+-------   ----                          
+00000000  __TI_static_base__            
+00000000  interruptVectors              
+00000209  main                          
+00001000  __STACK_SIZE                  
+00002291  __kernel_rem_pio2             
+000029c9  kfft                          
+00003045  sin                           
+00003045  sinl                          
+00003625  cos                           
+00003625  cosl                          
+00003c01  UARTvprintf                   
+00003f0d  SysCtlClockFreqSet            
+000041ed  Goertzel_Mag                  
+000043e1  __aeabi_dsub                  
+000043eb  __aeabi_dadd                  
+00004597  ADC0SS0_IRQHandler            
+00004597  ADC0SS1_IRQHandler            
+00004597  ADC0SS2_IRQHandler            
+00004597  ADC1SS0_IRQHandler            
+00004597  ADC1SS1_IRQHandler            
+00004597  ADC1SS2_IRQHandler            
+00004597  ADC1SS3_IRQHandler            
+00004597  AES0_IRQHandler               
+00004597  BusFault_Handler              
+00004597  CAN0_IRQHandler               
+00004597  CAN1_IRQHandler               
+00004597  COMP0_IRQHandler              
+00004597  COMP1_IRQHandler              
+00004597  COMP2_IRQHandler              
+00004597  DES0_IRQHandler               
+00004597  DebugMon_Handler              
+00004597  Default_Handler               
+00004597  EMAC0_IRQHandler              
+00004597  EPI0_IRQHandler               
+00004597  FLASH_IRQHandler              
+00004597  GPIOA_IRQHandler              
+00004597  GPIOB_IRQHandler              
+00004597  GPIOC_IRQHandler              
+00004597  GPIOD_IRQHandler              
+00004597  GPIOE_IRQHandler              
+00004597  GPIOF_IRQHandler              
+00004597  GPIOG_IRQHandler              
+00004597  GPIOH_IRQHandler              
+00004597  GPIOJ_IRQHandler              
+00004597  GPIOK_IRQHandler              
+00004597  GPIOL_IRQHandler              
+00004597  GPIOM_IRQHandler              
+00004597  GPION_IRQHandler              
+00004597  GPIOP0_IRQHandler             
+00004597  GPIOP1_IRQHandler             
+00004597  GPIOP2_IRQHandler             
+00004597  GPIOP3_IRQHandler             
+00004597  GPIOP4_IRQHandler             
+00004597  GPIOP5_IRQHandler             
+00004597  GPIOP6_IRQHandler             
+00004597  GPIOP7_IRQHandler             
+00004597  GPIOQ0_IRQHandler             
+00004597  GPIOQ1_IRQHandler             
+00004597  GPIOQ2_IRQHandler             
+00004597  GPIOQ3_IRQHandler             
+00004597  GPIOQ4_IRQHandler             
+00004597  GPIOQ5_IRQHandler             
+00004597  GPIOQ6_IRQHandler             
+00004597  GPIOQ7_IRQHandler             
+00004597  HIBERNATE_IRQHandler          
+00004597  HardFault_Handler             
+00004597  I2C0_IRQHandler               
+00004597  I2C1_IRQHandler               
+00004597  I2C2_IRQHandler               
+00004597  I2C3_IRQHandler               
+00004597  I2C4_IRQHandler               
+00004597  I2C5_IRQHandler               
+00004597  I2C6_IRQHandler               
+00004597  I2C7_IRQHandler               
+00004597  I2C8_IRQHandler               
+00004597  I2C9_IRQHandler               
+00004597  MemManage_Handler             
+00004597  NMI_Handler                   
+00004597  PWM0_0_IRQHandler             
+00004597  PWM0_1_IRQHandler             
+00004597  PWM0_2_IRQHandler             
+00004597  PWM0_3_IRQHandler             
+00004597  PWM0_FAULT_IRQHandler         
+00004597  PendSV_Handler                
+00004597  QEI0_IRQHandler               
+00004597  SHA0_IRQHandler               
+00004597  SSI0_IRQHandler               
+00004597  SSI1_IRQHandler               
+00004597  SSI2_IRQHandler               
+00004597  SSI3_IRQHandler               
+00004597  SVC_Handler                   
+00004597  SYSCTL_IRQHandler             
+00004597  SYSEXC_IRQHandler             
+00004597  SysTick_Handler               
+00004597  TAMPER0_IRQHandler            
+00004597  TIMER0A_IRQHandler            
+00004597  TIMER0B_IRQHandler            
+00004597  TIMER1A_IRQHandler            
+00004597  TIMER1B_IRQHandler            
+00004597  TIMER2A_IRQHandler            
+00004597  TIMER2B_IRQHandler            
+00004597  TIMER3A_IRQHandler            
+00004597  TIMER3B_IRQHandler            
+00004597  TIMER4A_IRQHandler            
+00004597  TIMER4B_IRQHandler            
+00004597  TIMER5A_IRQHandler            
+00004597  TIMER5B_IRQHandler            
+00004597  TIMER6A_IRQHandler            
+00004597  TIMER6B_IRQHandler            
+00004597  TIMER7A_IRQHandler            
+00004597  TIMER7B_IRQHandler            
+00004597  UART0_IRQHandler              
+00004597  UART1_IRQHandler              
+00004597  UART2_IRQHandler              
+00004597  UART3_IRQHandler              
+00004597  UART4_IRQHandler              
+00004597  UART5_IRQHandler              
+00004597  UART6_IRQHandler              
+00004597  UART7_IRQHandler              
+00004597  UDMAERR_IRQHandler            
+00004597  UDMA_IRQHandler               
+00004597  USB0_IRQHandler               
+00004597  UsageFault_Handler            
+00004597  WATCHDOG_IRQHandler           
+00004599  getADCBuffer                  
+0000473d  getFFTIBuffer                 
+000048e1  getFFTRBuffer                 
+00004a85  getVIBuffer                   
+00004c29  getVRBuffer                   
+00004dcd  __kernel_sin                  
+00004f41  __kernel_cos                  
+000050b1  sqrt                          
+000050b1  sqrtl                         
+00005209  __aeabi_ddiv                  
+0000533f  __aeabi_idiv0                 
+0000533f  __aeabi_ldiv0                 
+00005341  ldexp                         
+00005341  ldexpl                        
+00005341  scalbn                        
+00005341  scalbnl                       
+00005451  __aeabi_dmul                  
+0000554d  floor                         
+0000554d  floorl                        
+00005645  ADCSequenceStepConfigure      
+00005733  __aeabi_memcpy                
+00005733  __aeabi_memcpy4               
+00005733  __aeabi_memcpy8               
+00005733  memcpy                        
+00005861  __aeabi_cdcmpeq               
+00005861  __aeabi_cdcmple               
+000058e7  __aeabi_cdrcmple              
+0000596d  ADC0SS3_IRQHandler            
+0000596d  ADC0SS3_IRQHandler            
+000059ed  __aeabi_memclr                
+000059ed  __aeabi_memclr4               
+000059ed  __aeabi_memclr8               
+000059ef  __aeabi_memset                
+000059ef  __aeabi_memset4               
+000059ef  __aeabi_memset8               
+000059f5  memset                        
+00005a69  UARTStdioConfig               
+00005add  __aeabi_d2lz                  
+00005b4d  __TI_decompress_lzss          
+00005bb5  ConfigureUART2                
+00005c15  ConfigureUART7                
+00005c75  TimerControlTrigger           
+00005cd5  UARTwrite                     
+00005d31  __aeabi_d2iz                  
+00005d79  SysCtlPeripheralReady         
+00005e01  __TI_auto_init_nobinit_nopinit
+00005e45  __aeabi_l2d                   
+00005e85  __aeabi_uidiv                 
+00005e85  __aeabi_uidivmod              
+00005ec5  __aeabi_f2d                   
+00005efd  _c_int00_noargs               
+00005f31  __aeabi_i2d                   
+00005f5f  UARTprintf                    
+00005f85  SystemInit                    
+00005fa5  __aeabi_ui2d                  
+00005fc5  copysign                      
+00005fc5  copysignl                     
+00005fdf  __aeabi_lmul                  
+00005ff7  ADCIntClearEx                 
+00006009  __TI_decompress_none          
+00006017  Reset_Handler                 
+00006023  __TI_zero_init                
+00006031  __aeabi_errno_addr            
+00006039  _system_pre_init              
+0000603d  C$$EXIT                       
+0000603d  abort                         
+00006040  hanning_1024                  
+00007438  __TI_Handler_Table_Base       
+00007444  __TI_Handler_Table_Limit      
+00007450  __TI_CINIT_Base               
+00007460  __TI_CINIT_Limit              
+20000000  ADCBuffer                     
+20000000  __start___llvm_prf_cnts       
+20000000  __stop___llvm_prf_cnts        
+20000800  pui8ControlTable              
+20000c00  sig_out                       
+20001000  FFTIBuffer0                   
+20001200  FFTIBuffer1                   
+20001400  FFTIBuffer2                   
+20001600  FFTIBuffer3                   
+20001800  FFTIBuffer4                   
+20001a00  FFTIBuffer5                   
+20001c00  FFTIBuffer6                   
+20001e00  FFTIBuffer7                   
+20002000  FFTIBuffer8                   
+20002200  FFTIBuffer9                   
+20002400  FFTIBuffera                   
+20002600  FFTIBufferb                   
+20002800  FFTIBufferc                   
+20002a00  FFTIBufferd                   
+20002c00  FFTIBuffere                   
+20002e00  FFTIBufferf                   
+20003000  FFTRBuffer0                   
+20003200  FFTRBuffer1                   
+20003400  FFTRBuffer2                   
+20003600  FFTRBuffer3                   
+20003800  FFTRBuffer4                   
+20003a00  FFTRBuffer5                   
+20003c00  FFTRBuffer6                   
+20003e00  FFTRBuffer7                   
+20004000  FFTRBuffer8                   
+20004200  FFTRBuffer9                   
+20004400  FFTRBuffera                   
+20004600  FFTRBufferb                   
+20004800  FFTRBufferc                   
+20004a00  FFTRBufferd                   
+20004c00  FFTRBuffere                   
+20004e00  FFTRBufferf                   
+20005000  VIBuffer0                     
+20005200  VIBuffer1                     
+20005400  VIBuffer2                     
+20005600  VIBuffer3                     
+20005800  VIBuffer4                     
+20005a00  VIBuffer5                     
+20005c00  VIBuffer6                     
+20005e00  VIBuffer7                     
+20006000  VIBuffer8                     
+20006200  VIBuffer9                     
+20006400  VIBuffera                     
+20006600  VIBufferb                     
+20006800  VIBufferc                     
+20006a00  VIBufferd                     
+20006c00  VIBuffere                     
+20006e00  VIBufferf                     
+20007000  VRBuffer0                     
+20007200  VRBuffer1                     
+20007400  VRBuffer2                     
+20007600  VRBuffer3                     
+20007800  VRBuffer4                     
+20007a00  VRBuffer5                     
+20007c00  VRBuffer6                     
+20007e00  VRBuffer7                     
+20008000  VRBuffer8                     
+20008200  VRBuffer9                     
+20008400  VRBuffera                     
+20008600  VRBufferb                     
+20008800  VRBufferc                     
+20008a00  VRBufferd                     
+20008c00  VRBuffere                     
+20008e00  VRBufferf                     
+20009000  ADCBuffer0                    
+20009100  ADCBuffer1                    
+20009200  ADCBuffer2                    
+20009300  ADCBuffer3                    
+20009400  ADCBuffer4                    
+20009500  ADCBuffer5                    
+20009600  ADCBuffer6                    
+20009700  ADCBuffer7                    
+20009800  ADCBuffer8                    
+20009900  ADCBuffer9                    
+20009a00  ADCBuffera                    
+20009b00  ADCBufferb                    
+20009c00  ADCBufferc                    
+20009d00  ADCBufferd                    
+20009e00  ADCBuffere                    
+20009f00  ADCBufferf                    
+2000a000  f_test                        
+2000a0a8  mag_test                      
+2000a150  mag_out                       
+2000a178  THD                           
+2000a180  THD_out                       
+2000a188  f_in                          
+2000a190  f_out                         
+2000a198  mag_test_max                  
+2000a1a0  getDCVoltage                  
+2000a1a4  mag_test_i                    
+2000a1a8  uart_temp                     
+2000a1b0  __stack                       
+2000a3b0  __STACK_TOP                   
+2000b1b0  __STACK_END                   
+2000b1b0  sig_max                       
+2000b1b8  sig_min                       
+2000b1c0  sig_pp                        
+2000b1c8  v_ave                         
+2000b1d0  vmin                          
+2000b1d8  vmax                          
+2000b1e0  vpp                           
+2000b1e8  vmax_i                        
+2000b1f0  magmax                        
+2000b1f8  magmax_i                      
+2000b200  v_dc                          
+2000b208  vv_temp                       
+2000b210  mag_amp                       
+2000b218  transfer_flag                 
+2000b21a  transfer_count                
+2000b21c  circle_count                  
+2000b220  sample_rate                   
+2000b230  errno                         
+2000b234  SystemCoreClock               
+ffffffff  __TI_pprof_out_hndl           
+ffffffff  __TI_prof_data_size           
+ffffffff  __TI_prof_data_start          
+ffffffff  __binit__                     
+ffffffff  __c_args__                    
+ffffffff  binit                         
+UNDEFED   __mpu_init                    
+UNDEFED   _system_post_cinit            
+
+[321 symbols]
