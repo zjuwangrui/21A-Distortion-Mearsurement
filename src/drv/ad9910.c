@@ -43,10 +43,8 @@
 
 #include "drv/ad9910.h"
 #include "bsp/spi.h"
-#include "module/terminal.h"
 #include "stm32f1xx_hal.h"
 #include <string.h>
-#include <stdlib.h>
 #include <math.h>
 
 /* =====================================================================
@@ -195,10 +193,6 @@ static uint16_t phase_deg_to_pow(float deg)
  *  硬件初始化
  * ===================================================================== */
 
-/* CLI 命令注册的实现在文件末尾（term_cmd_t 静态变量在那里定义），
- * 这里先声明一下让 ad9910_init 能调用。 */
-static void ad9910_register_cli(void);
-
 static void ad9910_gpio_init(void)
 {
     __HAL_RCC_GPIOA_CLK_ENABLE();
@@ -286,9 +280,6 @@ void ad9910_init(void)
     /* --- 默认输出：1 kHz 单音，全幅，0° --- */
     ad9910_set_tone(&(ad9910_tone_t){ .f_hz = 1000.0, .amp01 = 1.0f, .phase_deg = 0.0f });
     ad9910_output_enable(true);
-
-    /* --- 注册 terminal 命令（实现在文件末尾） --- */
-    ad9910_register_cli();
 }
 
 /* --- 单独设置 API：内部都是"改 profile 0 一次性写"防抖 --- */
@@ -343,76 +334,3 @@ void ad9910_output_enable(bool en)
 }
 
 const ad9910_state_t *ad9910_get_state(void) { return &s_state; }
-
-/* =====================================================================
- *  Terminal 命令：dds.freq / dds.amp / dds.phase / dds.on / dds.off / dds.info
- * ===================================================================== */
-
-static int cmd_dds_freq(int argc, char **argv)
-{
-    if (argc < 2) { term_printf("usage: dds.freq <hz>\r\n"); return -1; }
-    double f = atof(argv[1]);
-    ad9910_set_freq_hz(f);
-    term_printf("freq: %.3f Hz\r\n", f);
-    return 0;
-}
-static term_cmd_t s_c_freq = { "dds.freq", cmd_dds_freq, "<hz> set output frequency", 0 };
-
-static int cmd_dds_amp(int argc, char **argv)
-{
-    if (argc < 2) { term_printf("usage: dds.amp <0..1>\r\n"); return -1; }
-    float a = (float)atof(argv[1]);
-    ad9910_set_amp01(a);
-    term_printf("amp: %.3f\r\n", (double)a);
-    return 0;
-}
-static term_cmd_t s_c_amp = { "dds.amp", cmd_dds_amp, "<0..1> set amplitude", 0 };
-
-static int cmd_dds_phase(int argc, char **argv)
-{
-    if (argc < 2) { term_printf("usage: dds.phase <deg>\r\n"); return -1; }
-    float p = (float)atof(argv[1]);
-    ad9910_set_phase_deg(p);
-    term_printf("phase: %.2f deg\r\n", (double)p);
-    return 0;
-}
-static term_cmd_t s_c_phase = { "dds.phase", cmd_dds_phase, "<deg> set phase", 0 };
-
-static int cmd_dds_on(int argc, char **argv)
-{
-    (void)argc; (void)argv;
-    ad9910_output_enable(true);
-    return 0;
-}
-static term_cmd_t s_c_on = { "dds.on", cmd_dds_on, "enable DAC output", 0 };
-
-static int cmd_dds_off(int argc, char **argv)
-{
-    (void)argc; (void)argv;
-    ad9910_output_enable(false);
-    return 0;
-}
-static term_cmd_t s_c_off = { "dds.off", cmd_dds_off, "disable DAC output", 0 };
-
-static int cmd_dds_info(int argc, char **argv)
-{
-    (void)argc; (void)argv;
-    term_printf("freq  : %.3f Hz\r\n", s_state.f_hz);
-    term_printf("amp   : %.3f\r\n",    (double)s_state.amp01);
-    term_printf("phase : %.2f deg\r\n",(double)s_state.phase_deg);
-    term_printf("output: %s\r\n", s_state.output_on ? "ON" : "OFF");
-    term_printf("pll   : %s\r\n", s_state.pll_locked ? "locked" : "unlocked");
-    return 0;
-}
-static term_cmd_t s_c_info = { "dds.info", cmd_dds_info, "show DDS state", 0 };
-
-/* 在 ad9910_init 结尾被调用，把上面这批命令挂到 terminal 上。 */
-static void ad9910_register_cli(void)
-{
-    term_register(&s_c_freq);
-    term_register(&s_c_amp);
-    term_register(&s_c_phase);
-    term_register(&s_c_on);
-    term_register(&s_c_off);
-    term_register(&s_c_info);
-}

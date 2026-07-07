@@ -13,12 +13,10 @@
 #define USE_CMSIS_DSP  1
 
 #include "module/fft.h"
-#include "module/terminal.h"
 #include "core/scheduler.h"
 #include "bsp/adc.h"
 #include <string.h>
 #include <math.h>
-#include <stdlib.h>
 
 #if USE_CMSIS_DSP
   #include "arm_math.h"
@@ -167,55 +165,6 @@ void fft_task(void)
     s_frame_ready = false;
 }
 
-/* ===== Terminal 命令 ===== */
-
-static int cmd_fft_start(int argc, char **argv)
-{
-    (void)argc; (void)argv;
-    if (!fft_start()) { term_printf("fft.start FAILED\r\n"); return -1; }
-    term_printf("fft: ch=%lu fs=%lu Hz N=%u\r\n",
-                (unsigned long)s_channel, (unsigned long)s_fs_hz, FFT_N_POINTS);
-    return 0;
-}
-static term_cmd_t s_c_start = { "fft.start", cmd_fft_start, "begin sampling", 0 };
-
-static int cmd_fft_stop(int argc, char **argv)
-{
-    (void)argc; (void)argv;
-    fft_stop();
-    return 0;
-}
-static term_cmd_t s_c_stop = { "fft.stop", cmd_fft_stop, "stop sampling", 0 };
-
-static int cmd_fft_info(int argc, char **argv)
-{
-    (void)argc; (void)argv;
-    term_printf("running : %s\r\n", fft_is_running() ? "yes" : "no");
-    term_printf("Fs      : %lu Hz\r\n", (unsigned long)s_result.fs_hz);
-    term_printf("frame   : %lu\r\n",    (unsigned long)s_result.frame_id);
-    term_printf("f0      : %.2f Hz\r\n", (double)s_result.f0_hz);
-    term_printf("THD     : %.3f %%\r\n", (double)s_result.thd_percent);
-    return 0;
-}
-static term_cmd_t s_c_info = { "fft.info", cmd_fft_info, "show latest result", 0 };
-
-static int cmd_fft_config(int argc, char **argv)
-{
-    if (argc < 3) {
-        term_printf("usage: fft.config <adc_ch> <fs_hz>\r\n");
-        term_printf("  ex : fft.config 1 40000   (PA1, 40kHz)\r\n");
-        return -1;
-    }
-    uint32_t ch = (uint32_t)atoi(argv[1]);
-    uint32_t fs = (uint32_t)atoi(argv[2]);
-    /* F103 上 ADC_CHANNEL_x 宏就是通道号 0..17，直接传数字即可 */
-    fft_configure(ch, fs);
-    term_printf("configured: ch=%lu fs=%lu\r\n",
-                (unsigned long)ch, (unsigned long)fs);
-    return 0;
-}
-static term_cmd_t s_c_config = { "fft.config", cmd_fft_config, "<ch> <fs_hz>", 0 };
-
 void fft_init(void)
 {
     memset(&s_result, 0, sizeof(s_result));
@@ -225,9 +174,4 @@ void fft_init(void)
 #if USE_CMSIS_DSP
     arm_rfft_init_q15(&s_rfft, FFT_N_POINTS, 0 /* forward */, 1 /* bit-reverse */);
 #endif
-
-    term_register(&s_c_start);
-    term_register(&s_c_stop);
-    term_register(&s_c_info);
-    term_register(&s_c_config);
 }

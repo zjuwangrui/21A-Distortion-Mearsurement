@@ -1,5 +1,4 @@
 #include "bsp/uart.h"
-#include "core/ring.h"
 #include <string.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -13,15 +12,10 @@ UART_HandleTypeDef huart3;
 
 static char _printf_buf[UART_PRINTF_BUF_SZ];
 
-/* ===== USART1 RX：中断驱动 + 环形缓冲 ===== */
-#define UART1_RX_BUF_SZ  128U           /* 必须是 2 的幂 */
-static uint8_t  s_u1_rx_storage[UART1_RX_BUF_SZ];
-static ring_t   s_u1_rx_ring;
-static uint8_t  s_u1_rx_byte;           /* HAL_UART_Receive_IT 单字节缓存 */
-
 /* ------------------------------------------------------------------ */
 /*  MX_USART1_UART_Init — 调试口  PA9(TX) / PA10(RX)  115200 8N1     */
-/*  开中断，供 terminal 使用                                          */
+/*  仅用于发送（printf 调试）；不开 RX 中断。                         */
+/*  需要收字符自己 poll UART_ReceiveByte() 即可。                     */
 /* ------------------------------------------------------------------ */
 void MX_USART1_UART_Init(void)
 {
@@ -35,7 +29,7 @@ void MX_USART1_UART_Init(void)
     gpio.Speed = GPIO_SPEED_FREQ_HIGH;
     HAL_GPIO_Init(GPIOA, &gpio);
 
-    gpio.Pin   = GPIO_PIN_10;         /* PA10 RX */
+    gpio.Pin   = GPIO_PIN_10;         /* PA10 RX（保留，需要时可轮询） */
     gpio.Mode  = GPIO_MODE_INPUT;
     gpio.Pull  = GPIO_NOPULL;
     HAL_GPIO_Init(GPIOA, &gpio);
@@ -50,12 +44,6 @@ void MX_USART1_UART_Init(void)
     huart1.Init.OverSampling = UART_OVERSAMPLING_16;
     if (HAL_UART_Init(&huart1) != HAL_OK)
         while (1);
-
-    ring_init(&s_u1_rx_ring, s_u1_rx_storage, UART1_RX_BUF_SZ);
-
-    HAL_NVIC_SetPriority(USART1_IRQn, 6, 0);
-    HAL_NVIC_EnableIRQ(USART1_IRQn);
-    HAL_UART_Receive_IT(&huart1, &s_u1_rx_byte, 1);
 }
 
 /* ------------------------------------------------------------------ */
@@ -94,7 +82,7 @@ void MX_USART3_UART_Init(void)
 }
 
 /* ------------------------------------------------------------------ */
-/*  USART1 调试工具函数                                                */
+/*  USART1 调试工具函数（TX 阻塞，任何模块可直接调用做打印）           */
 /* ------------------------------------------------------------------ */
 void UART_SendByte(uint8_t byte)
 {
@@ -134,21 +122,12 @@ HAL_StatusTypeDef UART_ReceiveBytes(uint8_t *buf, uint16_t len, uint32_t timeout
     return HAL_UART_Receive(&huart1, buf, len, timeout_ms);
 }
 
-bool UART1_RxPop(uint8_t *b)
-{
-    return ring_pop(&s_u1_rx_ring, b);
-}
-
 /* ------------------------------------------------------------------ */
-/*  统一 HAL RxCplt 回调：按外设实例分发                              */
-/*  之前散在 main.c 里，改到这里集中管理                              */
+/*  统一 HAL RxCplt 回调（当前只服务 USART3 → ESP8266）                */
 /* ------------------------------------------------------------------ */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-    if (huart->Instance == USART1) {
-        ring_push(&s_u1_rx_ring, s_u1_rx_byte);
-        HAL_UART_Receive_IT(&huart1, &s_u1_rx_byte, 1);   /* 立即重装 */
-    } else if (huart->Instance == USART3) {
+    if (huart->Instance == USART3) {
         ESP_UART_IRQHandler();
     }
 }

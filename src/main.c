@@ -3,18 +3,10 @@
  *
  * 只做：时钟 → BSP 初始化 → 注册核心任务 → 交给调度器。
  *
- * 增加业务模块（比如 THD 测量、按键、通信）的步骤：
- *   1) 在 include/module/xxx.h 与 src/module/xxx.c 里写：
- *        void xxx_init(void);
- *        void xxx_task(void);
- *   2) 需要新驱动就写 include/drv/yyy.h 与 src/drv/yyy.c，
- *      在 xxx_init 里调用其初始化。
- *   3) 在下方任务表里加两行：初始化 + sched_register。
+ * 模块配置通过 C 代码（在下面 main() 里直接调 xxx_configure / xxx_start），
+ * 无 CLI。想改参数就改这几行然后重新烧录，比赛也稳定。
  *
- * 各模块耗时约束（详见 core/scheduler.h）：
- *   - 任务函数禁用 HAL_Delay
- *   - 单次执行时间 < 5ms
- *   - 长操作请状态机化
+ * 想 debug 打印：include "bsp/uart.h" 后 UART_Printf(...) 就行。
  */
 
 #include "stm32f1xx_hal.h"
@@ -25,9 +17,7 @@
 #include "bsp/adc.h"
 
 #include "core/scheduler.h"
-#include "module/terminal.h"
 #include "module/ui.h"
-#include "module/fft.h"
 #include "module/thd.h"
 #include "drv/ad9910.h"
 
@@ -60,14 +50,12 @@ static void SystemClock_Config(void)
     if (HAL_RCC_ClockConfig(&clk, FLASH_LATENCY_2) != HAL_OK) while (1);
 }
 
-/* ===== 心跳任务：红灯 500ms 翻转，作为"程序在跑"的可视化指示 ===== */
+/* ===== 心跳任务：红灯 500ms 翻转，程序在跑的可视化指示 ===== */
 static void heartbeat_task(void) { LED_Toggle(LED_RED); }
 
-/* ===== 任务表（在这里增删） ===== */
+/* ===== 任务表（增删模块改这里） ===== */
 static sched_task_t t_heartbeat = { .run = heartbeat_task, .period_ms = 500, .name = "heart" };
-static sched_task_t t_terminal  = { .run = terminal_task,  .period_ms = 10,  .name = "term"  };
 static sched_task_t t_ui        = { .run = ui_task,        .period_ms = 100, .name = "ui"    };
-//static sched_task_t t_fft       = { .run = fft_task,       .period_ms = 0,   .name = "fft"   };
 static sched_task_t t_thd       = { .run = thd_task,       .period_ms = 0,   .name = "thd"   };
 
 int main(void)
@@ -77,27 +65,27 @@ int main(void)
     SystemClock_Config();
 
     /* ---- BSP ---- */
-    MX_GPIO_Init();                /* 使能 GPIO 时钟 */
-    MX_USART1_UART_Init();         /* 调试口 + terminal 输入 */
+    MX_GPIO_Init();
+    LED_Init();
+    MX_USART1_UART_Init();         /* 打印用；不开 RX IT */
     MX_ADC1_Init();
 
-    /* ---- 通用模块 ---- */
-    terminal_init();
+    /* ---- 模块初始化 ---- */
     ui_init();
     thd_init();
-    ad9910_init();                 /* AD9910 上电 + PLL 锁定 + 默认 1kHz 输出 */
+    ad9910_init();                 /* AD9910 上电 + PLL + 默认 1kHz 输出 */
 
-    thd_configure(ADC_CHANNEL_1, 1000000);  /* THD 测量：PA1，采样率 1MHz */
+    /* ---- 应用配置 ----
+     * 参数都在这里定死，改完就烧。比赛版本改完不再动。 */
+    thd_configure(ADC_CHANNEL_1, 400000);  /* THD 测量：PA1，Fs=400kHz */
     thd_start();
     ui_switch_to("thd");
+
     /* ---- 调度器 ---- */
     sched_init();
     sched_register(&t_heartbeat);
-    sched_register(&t_terminal);
     sched_register(&t_ui);
-    //sched_register(&t_fft);
     sched_register(&t_thd);
-
 
     sched_run_forever();           /* 不返回 */
 }
