@@ -28,6 +28,7 @@
 #include "module/terminal.h"
 #include "module/ui.h"
 #include "module/fft.h"
+#include "module/thd.h"
 
 /* ===== 系统时钟：HSE 8MHz × PLL×9 = 72MHz，HSE 失败回退 HSI ===== */
 static void SystemClock_Config(void)
@@ -65,7 +66,8 @@ static void heartbeat_task(void) { LED_Toggle(LED_RED); }
 static sched_task_t t_heartbeat = { .run = heartbeat_task, .period_ms = 500, .name = "heart" };
 static sched_task_t t_terminal  = { .run = terminal_task,  .period_ms = 10,  .name = "term"  };
 static sched_task_t t_ui        = { .run = ui_task,        .period_ms = 100, .name = "ui"    };
-static sched_task_t t_fft       = { .run = fft_task,       .period_ms = 0,   .name = "fft"   };
+//static sched_task_t t_fft       = { .run = fft_task,       .period_ms = 0,   .name = "fft"   };
+static sched_task_t t_thd       = { .run = thd_task,       .period_ms = 0,   .name = "thd"   };
 
 int main(void)
 {
@@ -74,27 +76,26 @@ int main(void)
     SystemClock_Config();
 
     /* ---- BSP ---- */
-    MX_GPIO_Init();                /* 只使能 GPIO 时钟 */
-    LED_Init();
+    MX_GPIO_Init();                /* 使能 GPIO 时钟 */
     MX_USART1_UART_Init();         /* 调试口 + terminal 输入 */
     MX_ADC1_Init();
 
     /* ---- 通用模块 ---- */
     terminal_init();
     ui_init();
-    fft_init();
+    thd_init();
 
+    thd_configure(ADC_CHANNEL_1, 1000000);  /* THD 测量：PA1，采样率 1MHz */
+    thd_start();
+    ui_switch_to("thd");
     /* ---- 调度器 ---- */
     sched_init();
     sched_register(&t_heartbeat);
     sched_register(&t_terminal);
     sched_register(&t_ui);
-    sched_register(&t_fft);
+    //sched_register(&t_fft);
+    sched_register(&t_thd);
 
-    /* FFT 默认不跑（避免空转 ADC）。terminal 输入
-     *   task.enable fft
-     * 打开，或让业务模块自己开。 */
-    sched_set_enabled("fft", false);
 
     sched_run_forever();           /* 不返回 */
 }

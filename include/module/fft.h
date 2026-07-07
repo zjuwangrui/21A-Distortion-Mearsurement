@@ -26,8 +26,8 @@
  * 可用 fft_configure() 覆盖。
  */
 
-#define FFT_N_POINTS        1024U
-#define FFT_DEFAULT_FS_HZ   40000U
+#define FFT_N_POINTS        2048U
+#define FFT_DEFAULT_FS_HZ   1000000U  /* 采样率 1MHz*/
 #define FFT_DEFAULT_CHANNEL 1U          /* ADC_CHANNEL_1 = PA1 */
 
 typedef struct {
