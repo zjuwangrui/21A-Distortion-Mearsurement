@@ -1,0 +1,109 @@
+Protel Design System Design Rule Check
+PCB File : C:\Users\lenovo\WPSDrive\1639471701\WPS企业云盘\浙江大学\我的企业文档\校内外活动\电赛\选题\21年国赛A题信号失真度测量装置\resources\省二等奖-ZJA434-信电13组-A题-报告及资料（更新）\原理图以及PCB文件\AD\2021.PcbDoc
+Date     : 2026/7/7
+Time     : 10:52:00
+
+Processing Rule : Short-Circuit Constraint (Allowed=No) (Disabled)(All),(All)
+Rule Violations :0
+
+Processing Rule : Un-Routed Net Constraint ( (All) )
+   Violation between Un-Routed Net Constraint: Net -5v Between Track on layer Bottom Layer (4000,2250.002mil) And Pad U3-4 (4000,2900.002mil)
+Rule Violations :1
+
+Processing Rule : Clearance Constraint (Gap=20mil) (All),(All)
+   Violation between Pad C7-2(4748.425mil,2400mil)  Multi-Layer and 
+                     Track (4652.166mil,2472.834mil)(4950mil,2472.834mil)  Bottom Layer
+   Violation between Pad U5-2(4600mil,1850mil)  Multi-Layer and 
+                     Pad U5-1(4600mil,1777.166mil)  Multi-Layer
+   Violation between Pad U5-3(4600mil,1922.835mil)  Multi-Layer and 
+                     Pad U5-2(4600mil,1850mil)  Multi-Layer
+   Violation between Pad U5-4(4600mil,1995.67mil)  Multi-Layer and 
+                     Pad U5-3(4600mil,1922.835mil)  Multi-Layer
+   Violation between Pad U5-5(4600mil,2068.504mil)  Multi-Layer and 
+                     Pad U5-4(4600mil,1995.67mil)  Multi-Layer
+   Violation between Pad U6-2(4950mil,2254.33mil)  Multi-Layer and 
+                     Pad U6-1(4950mil,2181.496mil)  Multi-Layer
+   Violation between Pad U6-3(4950mil,2327.165mil)  Multi-Layer and 
+                     Pad U6-2(4950mil,2254.33mil)  Multi-Layer
+   Violation between Pad U6-4(4950mil,2400mil)  Multi-Layer and 
+                     Pad U6-3(4950mil,2327.165mil)  Multi-Layer
+   Violation between Pad U6-5(4950mil,2472.834mil)  Multi-Layer and 
+                     Pad U6-4(4950mil,2400mil)  Multi-Layer
+Rule Violations :9
+
+Processing Rule : Power Plane Connect Rule(Relief Connect )(Expansion=20mil) (Conductor Width=10mil) (Air Gap=10mil) (Entries=4) (All)
+Rule Violations :0
+
+Processing Rule : Width Constraint (Min=30mil) (Max=50mil) (Preferred=30mil) (All)
+Rule Violations :0
+
+Processing Rule : Height Constraint (Min=0mil) (Max=1000mil) (Prefered=500mil) (All)
+Rule Violations :0
+
+Processing Rule : Hole Size Constraint (Min=1mil) (Max=100mil) (All)
+Rule Violations :0
+
+Processing Rule : Hole To Hole Clearance (Gap=10mil) (All),(All)
+Rule Violations :0
+
+Processing Rule : Minimum Solder Mask Sliver (Gap=10mil) (Disabled)(All),(All)
+Rule Violations :0
+
+Processing Rule : Silkscreen Over Component Pads (Clearance=10mil) (Disabled)(IsPad),(All)
+Rule Violations :0
+
+Processing Rule : Silk to Silk (Clearance=10mil) (All),(All)
+   Violation between Text "C1" (3735mil,2480mil)  Top Overlay and 
+                     Arc (3666.914mil,2400.014mil)  Top Overlay
+   Violation between Text "r5" (3915mil,2365mil)  Top Overlay and 
+                     Track (4033.071mil,2279.775mil)(4033.071mil,2520.225mil)  Top Overlay
+   Violation between Text "C1" (3735mil,2480mil)  Top Overlay and 
+                     Track (3666.929mil,2429.528mil)(3666.929mil,2520.225mil)  Top Overlay
+   Violation between Text "C5" (4090mil,1800mil)  Top Overlay and 
+                     Track (4050mil,1800mil)(4080mil,1800mil)  Top Overlay
+   Violation between Text "C5" (4090mil,1800mil)  Top Overlay and 
+                     Track (4080mil,1800mil)(4080mil,2000mil)  Top Overlay
+   Violation between Text "C5" (4090mil,1800mil)  Top Overlay and 
+                     Track (4020mil,1800mil)(4020mil,2000mil)  Top Overlay
+   Violation between Text "C5" (4090mil,1800mil)  Top Overlay and 
+                     Track (4020mil,1800mil)(4050mil,1800mil)  Top Overlay
+   Violation between Text "C5" (4090mil,1800mil)  Top Overlay and 
+                     Track (4050mil,1791mil)(4050mil,1800mil)  Top Overlay
+   Violation between Text "C6" (3805mil,1870mil)  Top Overlay and 
+                     Track (3750mil,1850mil)(3750mil,2050mil)  Top Overlay
+   Violation between Text "C14" (4920mil,2290mil)  Top Overlay and 
+                     Track (5014.961mil,2118.504mil)(5014.961mil,2535.826mil)  Top Overlay
+   Violation between Text "C13" (4930mil,2550mil)  Top Overlay and 
+                     Track (5014.961mil,2118.504mil)(5014.961mil,2535.826mil)  Top Overlay
+   Violation between Text "C13" (4930mil,2550mil)  Top Overlay and 
+                     Track (4824.803mil,2535.826mil)(5014.961mil,2535.826mil)  Top Overlay
+   Violation between Text "C10" (4380mil,2480mil)  Top Overlay and 
+                     Track (4345mil,2500mil)(4375mil,2500mil)  Top Overlay
+   Violation between Text "C7" (4450mil,2405mil)  Top Overlay and 
+                     Track (4345mil,2300mil)(4345mil,2500mil)  Top Overlay
+   Violation between Text "C10" (4380mil,2480mil)  Top Overlay and 
+                     Track (4345mil,2300mil)(4345mil,2500mil)  Top Overlay
+   Violation between Text "C7" (4450mil,2405mil)  Top Overlay and 
+                     Track (4405mil,2300mil)(4405mil,2500mil)  Top Overlay
+   Violation between Text "C10" (4380mil,2480mil)  Top Overlay and 
+                     Track (4375mil,2500mil)(4405mil,2500mil)  Top Overlay
+   Violation between Text "C10" (4380mil,2480mil)  Top Overlay and 
+                     Track (4375mil,2500mil)(4375mil,2509mil)  Top Overlay
+   Violation between Text "C13" (4930mil,2550mil)  Top Overlay and 
+                     Text "U6" (4829.5mil,2570.665mil)  Top Overlay
+   Violation between Text "C2" (3750mil,2705mil)  Top Overlay and 
+                     Text "U4" (3651.5mil,2619.5mil)  Top Overlay
+   Violation between Text "C12" (4940mil,3046.575mil)  Top Overlay and 
+                     Text "u2" (4921.5mil,3060.5mil)  Top Overlay
+   Violation between Text "C7" (4450mil,2405mil)  Top Overlay and 
+                     Text "r4" (4550mil,2430mil)  Top Overlay
+   Violation between Text "p2" (3550mil,1750mil)  Top Overlay and 
+                     Text "p3" (3650mil,1750mil)  Top Overlay
+Rule Violations :23
+
+Processing Rule : Net Antennae (Tolerance=0mil) (All)
+Rule Violations :0
+
+
+Violations Detected : 33
+Time Elapsed        : 00:00:00

@@ -74,7 +74,7 @@ int main(void)
     SystemClock_Config();
 
     /* ---- BSP ---- */
-    MX_GPIO_Init();                
+    MX_GPIO_Init();                /* 只使能 GPIO 时钟 */
     LED_Init();
     MX_USART1_UART_Init();         /* 调试口 + terminal 输入 */
     MX_ADC1_Init();
@@ -96,5 +96,5 @@ int main(void)
      * 打开，或让业务模块自己开。 */
     sched_set_enabled("fft", false);
 
-    sched_run_forever();          
+    sched_run_forever();           /* 不返回 */
 }
