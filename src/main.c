@@ -29,6 +29,7 @@
 #include "module/ui.h"
 #include "module/fft.h"
 #include "module/thd.h"
+#include "drv/ad9910.h"
 
 /* ===== 系统时钟：HSE 8MHz × PLL×9 = 72MHz，HSE 失败回退 HSI ===== */
 static void SystemClock_Config(void)
@@ -84,6 +85,7 @@ int main(void)
     terminal_init();
     ui_init();
     thd_init();
+    ad9910_init();                 /* AD9910 上电 + PLL 锁定 + 默认 1kHz 输出 */
 
     thd_configure(ADC_CHANNEL_1, 1000000);  /* THD 测量：PA1，采样率 1MHz */
     thd_start();
