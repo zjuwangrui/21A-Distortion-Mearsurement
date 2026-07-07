@@ -51,4 +51,18 @@ float goertzel_magnitude (const int16_t *samples, uint32_t n,
 float goertzel_magnitude2(const int16_t *samples, uint32_t n,
                           uint32_t fs_hz, float target_hz);
 
+/* 复数版本：同时返回实部/虚部。用于需要相位的场景（例如波形重建）。
+ *   Re(X) = s1 - s2·cos(ω)
+ *   Im(X) = s2·sin(ω)
+ *   |X|   = sqrt(Re² + Im²)
+ *   ∠X   = atan2(Im, Re)  (radians, -π..π)
+ */
+typedef struct {
+    float re;
+    float im;
+} goertzel_complex_t;
+
+goertzel_complex_t goertzel_complex(const int16_t *samples, uint32_t n,
+                                    uint32_t fs_hz, float target_hz);
+
 #endif /* __MODULE_GOERTZEL_H */

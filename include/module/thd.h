@@ -38,11 +38,12 @@
 #define THD_MAX_HARMONIC     5        /* 算到 5 次谐波 */
 
 typedef struct {
-    float    f0_hz;                        /* 检测到的基频 Hz            */
-    float    harmonic[THD_MAX_HARMONIC];   /* H[0]=H1 幅度 … H[4]=H5    */
-    float    thd_percent;                  /* 失真度 %                    */
-    uint32_t frame_id;                     /* 每算一帧自增                */
-    uint32_t fs_hz;                        /* 当前采样率                  */
+    float    f0_hz;                                /* 检测到的基频 Hz            */
+    float    harmonic[THD_MAX_HARMONIC];           /* H[0]=H1 幅度 … H[4]=H5     */
+    float    harmonic_phase[THD_MAX_HARMONIC];     /* 相位 (radians, -π..π)     */
+    float    thd_percent;                          /* 失真度 %                    */
+    uint32_t frame_id;                             /* 每算一帧自增                */
+    uint32_t fs_hz;                                /* 当前采样率                  */
 } thd_result_t;
 
 void  thd_init(void);

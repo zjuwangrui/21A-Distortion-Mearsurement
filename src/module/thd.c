@@ -166,13 +166,16 @@ static void compute_harmonics_and_thd(const int16_t *samples, uint32_t n,
 {
     float nyq = (float)fs_hz * 0.5f;
 
-    /* H1..H5 */
+    /* H1..H5：一次 Goertzel 复数结果 → 同时得到幅度 + 相位 */
     for (int k = 1; k <= THD_MAX_HARMONIC; ++k) {
         float f = f0 * (float)k;
         if (f >= nyq) {
-            out->harmonic[k - 1] = 0.0f;
+            out->harmonic[k - 1]       = 0.0f;
+            out->harmonic_phase[k - 1] = 0.0f;
         } else {
-            out->harmonic[k - 1] = goertzel_magnitude(samples, n, fs_hz, f);
+            goertzel_complex_t c = goertzel_complex(samples, n, fs_hz, f);
+            out->harmonic[k - 1]       = sqrtf(c.re * c.re + c.im * c.im);
+            out->harmonic_phase[k - 1] = atan2f(c.im, c.re);
         }
     }
 

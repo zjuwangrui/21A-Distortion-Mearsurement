@@ -41,3 +41,30 @@ float goertzel_magnitude(const int16_t *samples, uint32_t n,
 {
     return sqrtf(goertzel_magnitude2(samples, n, fs_hz, target_hz));
 }
+
+/* 复数版：额外算一次 sinf 提取虚部。
+ * 用来重建波形时需要相位，公式：
+ *   Re = s1 - s2 * cos(ω)
+ *   Im = s2 * sin(ω)
+ */
+goertzel_complex_t goertzel_complex(const int16_t *samples, uint32_t n,
+                                    uint32_t fs_hz, float target_hz)
+{
+    const float k     = target_hz * (float)n / (float)fs_hz;
+    const float omega = 2.0f * 3.14159265358979323846f * k / (float)n;
+    const float cw    = cosf(omega);
+    const float sw    = sinf(omega);
+    const float coeff = 2.0f * cw;
+
+    float s1 = 0.0f, s2 = 0.0f;
+    for (uint32_t i = 0; i < n; ++i) {
+        float s0 = coeff * s1 - s2 + (float)samples[i];
+        s2 = s1;
+        s1 = s0;
+    }
+
+    goertzel_complex_t r;
+    r.re = s1 - s2 * cw;
+    r.im = s2 * sw;
+    return r;
+}
