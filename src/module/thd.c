@@ -36,14 +36,19 @@ static volatile bool    s_frame_ready = false;
 
 /* ============================ 扫描配置 ============================ */
 
-/* 粗扫范围：50Hz 起、50Hz 步长，扫到 4kHz。保证 5*f0 < 20kHz = Fs/2。
- * 若 Fs 改到其他值，粗扫上限自动跟着 Fs/2/5 走。*/
-#define COARSE_START_HZ    50.0f
-#define COARSE_STEP_HZ     50.0f
+/* 输入信号频率范围：1 kHz ~ 100 kHz（f0）
+ * Fs=1MHz、N=1024 下：
+ *   Goertzel 有效带宽 ≈ Fs/N ≈ 1 kHz  → 粗扫步长按这个走，防漏峰
+ *   粗扫上限 = Fs/10  → 保证 5 次谐波 < Nyquist
+ *
+ * 每帧总扫描量：粗扫 ~100 点 + 细扫 ~20 点 + 5 谐波 ≈ 55 ms CPU
+ * 帧率 1 ms/半帧，中间被 s_frame_ready 卡住丢弃，实际 THD 更新 ~18Hz。
+ */
+#define COARSE_START_HZ    1000.0f      /* 1 kHz */
+#define COARSE_STEP_HZ     1000.0f      /* = Goertzel 有效带宽 */
 
-/* 细扫在粗扫峰值 ± FINE_RANGE_HZ 内，FINE_STEP_HZ 步长 */
-#define FINE_RANGE_HZ      50.0f
-#define FINE_STEP_HZ        5.0f
+#define FINE_RANGE_HZ      1000.0f      /* ±1 kHz */
+#define FINE_STEP_HZ        100.0f      /* 目标分辨率 */
 
 /* ============================ ISR 回调 ============================ */
 
@@ -127,9 +132,10 @@ static uint32_t goertzel_sweep_argmax(const int16_t *samples, uint32_t n,
 static float estimate_f0(const int16_t *samples, uint32_t n, uint32_t fs_hz)
 {
     /* -------- 粗扫 -------- */
-    /* 上限：Fs/2/5 保证 5 次谐波不越 Nyquist。取 min(4000, Fs/10) */
+    /* 上限：Fs/10 保证 5 次谐波不越 Nyquist。
+     * Fs=1MHz → 100 kHz；Fs=40kHz → 4 kHz —— 自动跟着 Fs 走。*/
     float coarse_stop = (float)fs_hz / 10.0f;
-    if (coarse_stop > 4000.0f) coarse_stop = 4000.0f;
+    if (coarse_stop <= COARSE_START_HZ) coarse_stop = COARSE_START_HZ + 10.0f * COARSE_STEP_HZ;
     uint32_t coarse_n = (uint32_t)((coarse_stop - COARSE_START_HZ) / COARSE_STEP_HZ);
     if (coarse_n < 3) coarse_n = 3;
 

@@ -15,7 +15,12 @@ static bool         s_fft_running = false;
 void MX_ADC1_Init(void)
 {
     __HAL_RCC_ADC1_CLK_ENABLE();
-    __HAL_RCC_ADC_CONFIG(RCC_ADCPCLK2_DIV6);   /* 72/6 = 12 MHz */
+    /* ADCCLK 分频：
+     *   /6 = 12 MHz  安全（F103 手册上限 14 MHz），但单 ADC 只到 857 kSps
+     *   /4 = 18 MHz  超规 28%，实测大多数 F103/GD32 芯片能跑，可到 1.28 MSps
+     * 为达到 THD 采样 1 MHz，选 /4；线性度可能略降，
+     * 若测出的 THD 明显偏大，回退到 /6 并把 Fs 降到 500 kHz 复测对比。 */
+    __HAL_RCC_ADC_CONFIG(RCC_ADCPCLK2_DIV4);   /* 72/4 = 18 MHz (over-spec) */
 }
 
 void ADC_SetFFTCallback(adc_fft_cb_t cb) { s_fft_cb = cb; }
@@ -91,7 +96,10 @@ bool ADC_StartFFT(uint32_t channel, uint32_t fs_hz,
     ADC_ChannelConfTypeDef ch = {0};
     ch.Channel      = channel;
     ch.Rank         = ADC_REGULAR_RANK_1;
-    ch.SamplingTime = ADC_SAMPLETIME_13CYCLES_5;
+    /* 最短采样时间。18MHz ADCCLK 下 1.5+12.5=14 cycles = 0.78μs/次 → 1.28 MSps
+     * 前提：输入源阻抗 < ~500Ω。AD9910 经运放缓冲的输出满足这个条件。
+     * 若输入接高阻分压器，加运放跟随，否则采样保持电容充不满 → 精度掉。 */
+    ch.SamplingTime = ADC_SAMPLETIME_1CYCLE_5;
     HAL_ADC_ConfigChannel(&hadc1, &ch);
 
     s_fft_buf     = buf;

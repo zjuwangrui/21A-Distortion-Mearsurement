@@ -1,0 +1,12 @@
+Removed Pin From Net: NetName=Netr1_1 Pin=U3-8
+Removed Member From Class: ClassName=TPS5403 Member=AC
+Removed Member From Class: ClassName=TPS5403 Member=DC
+Added Component: Designator=r11(AXIAL-0.3)
+Added Pin To Net: NetName=Netr1_1 Pin=r2-2
+Added Pin To Net: NetName=Netr11_1 Pin=r11-1
+Added Pin To Net: NetName=Netr11_1 Pin=U3-8
+Added Net: Name=Netr11_1
+Added Pin To Net: NetName=Netr11_2 Pin=r11-2
+Added Pin To Net: NetName=Netr11_2 Pin=U3-1
+Added Net: Name=Netr11_2
+Added Member To Class: ClassName=2021 Member=Component r11 Res1

@@ -75,9 +75,8 @@ int main(void)
     thd_init();
     ad9910_init();                 /* AD9910 上电 + PLL + 默认 1kHz 输出 */
 
-    /* ---- 应用配置 ----
-     * 参数都在这里定死，改完就烧。比赛版本改完不再动。 */
-    thd_configure(ADC_CHANNEL_1, 400000);  /* THD 测量：PA1，Fs=400kHz */
+    /* ---- 应用配置 ---- */
+    thd_configure(ADC_CHANNEL_1, 1000000);  /* THD 测量：PA1，Fs=1MHz（需 ADCCLK=18MHz 超规） */
     thd_start();
     ui_switch_to("thd");
 
