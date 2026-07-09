@@ -1,0 +1,16 @@
+Removed Pin From Net: NetName=VREF Pin=U7-6
+Added Component: Designator=P2(HDR1X2)
+Added Component: Designator=U1(SO-8)
+Added Pin To Net: NetName=NetP2_1 Pin=P2-1
+Added Pin To Net: NetName=NetC2_1 Pin=P2-2
+Added Pin To Net: NetName=NetC3_2 Pin=U1-1
+Added Pin To Net: NetName=NetR2_1 Pin=U1-4
+Added Pin To Net: NetName=NetP2_1 Pin=U1-5
+Added Pin To Net: NetName=NetC2_1 Pin=U1-6
+Added Pin To Net: NetName=NetC1_2 Pin=U1-7
+Added Pin To Net: NetName=NetC3_1 Pin=U1-8
+Added Pin To Net: NetName=NetAC_1 Pin=U4-2
+Added Pin To Net: NetName=NetDC_1 Pin=U5-2
+Added Pin To Net: NetName=NetU7_2 Pin=U7-2
+Added Pin To Net: NetName=NetU7_2 Pin=U7-6
+Added Net: Name=NetU7_2

@@ -1,0 +1,80 @@
+Removed Member From Class: ClassName=2021 Member=C18
+Removed Member From Class: ClassName=2021 Member=C20
+Removed Member From Class: ClassName=2021 Member=C21
+Removed Member From Class: ClassName=2021 Member=C22
+Change Component Designator: OldDesignator=AC1 NewDesignator=AC
+Change Component Designator: OldDesignator=C1 NewDesignator=C52
+Change Component Designator: OldDesignator=C2 NewDesignator=C51
+Change Component Designator: OldDesignator=C3 NewDesignator=C7
+Change Component Designator: OldDesignator=C4 NewDesignator=C8
+Change Component Designator: OldDesignator=C5 NewDesignator=C42
+Change Component Designator: OldDesignator=C6 NewDesignator=C62
+Change Component Designator: OldDesignator=C7 NewDesignator=C32
+Change Component Designator: OldDesignator=C8 NewDesignator=C41
+Change Component Designator: OldDesignator=C9 NewDesignator=C61
+Change Component Designator: OldDesignator=C10 NewDesignator=C31
+Change Component Designator: OldDesignator=C11 NewDesignator=C5
+Change Component Designator: OldDesignator=C12 NewDesignator=C6
+Change Component Designator: OldDesignator=C13 NewDesignator=C82
+Change Component Designator: OldDesignator=C14 NewDesignator=C92
+Change Component Designator: OldDesignator=C15 NewDesignator=C81
+Change Component Designator: OldDesignator=C16 NewDesignator=C91
+Change Component Designator: OldDesignator=C17 NewDesignator=C22
+Change Component Designator: OldDesignator=C18 NewDesignator=C10
+Change Component Designator: OldDesignator=C19 NewDesignator=C21
+Change Component Designator: OldDesignator=C20 NewDesignator=C12
+Change Component Designator: OldDesignator=C21 NewDesignator=C9
+Change Component Designator: OldDesignator=C22 NewDesignator=C11
+Change Component Designator: OldDesignator=C23 NewDesignator=C72
+Change Component Designator: OldDesignator=C24 NewDesignator=C71
+Change Component Designator: OldDesignator=DC1 NewDesignator=DC
+Change Component Designator: OldDesignator=P1 NewDesignator=P2
+Change Component Designator: OldDesignator=r1 NewDesignator=r4
+Change Component Designator: OldDesignator=r2 NewDesignator=r5
+Change Component Designator: OldDesignator=r3 NewDesignator=r9
+Change Component Designator: OldDesignator=r4 NewDesignator=r10
+Change Component Designator: OldDesignator=r5 NewDesignator=r11
+Change Component Designator: OldDesignator=r6 NewDesignator=r7
+Change Component Designator: OldDesignator=r7 NewDesignator=r6
+Change Component Designator: OldDesignator=Ros1 NewDesignator=Ros2
+Change Component Designator: OldDesignator=Ros2 NewDesignator=Ros1
+Change Component Designator: OldDesignator=Vo1 NewDesignator=Vo
+Added Component: Designator=U3(DIP8)
+Added Component: Designator=U4(DIP8)
+Added Component: Designator=U5(DIP8)
+Added Component: Designator=U7(DIP8)
+Added Pin To Net: NetName=Netr11_2 Pin=U3-1
+Added Pin To Net: NetName=GND Pin=U3-2
+Added Pin To Net: NetName=NetAC_1 Pin=U3-3
+Added Pin To Net: NetName=-5V Pin=U3-4
+Added Pin To Net: NetName=VREF Pin=U3-5
+Added Pin To Net: NetName=NetU3_6 Pin=U3-6
+Added Pin To Net: NetName=+5 Pin=U3-7
+Added Pin To Net: NetName=Netr11_1 Pin=U3-8
+Added Pin To Net: NetName=NetRos1_1 Pin=U4-1
+Added Pin To Net: NetName=NetC6_1 Pin=U4-3
+Added Pin To Net: NetName=-5 Pin=U4-4
+Added Pin To Net: NetName=NetAC_1 Pin=U4-6
+Added Pin To Net: NetName=+5 Pin=U4-7
+Added Pin To Net: NetName=NetRos1_2 Pin=U4-8
+Added Pin To Net: NetName=NetRos2_1 Pin=U5-1
+Added Pin To Net: NetName=NetC8_1 Pin=U5-3
+Added Pin To Net: NetName=-5 Pin=U5-4
+Added Pin To Net: NetName=NetDC_1 Pin=U5-6
+Added Pin To Net: NetName=+5 Pin=U5-7
+Added Pin To Net: NetName=NetRos2_2 Pin=U5-8
+Added Pin To Net: NetName=NetRos3_1 Pin=U7-1
+Added Pin To Net: NetName=Netr6_1 Pin=U7-3
+Added Pin To Net: NetName=-5 Pin=U7-4
+Added Pin To Net: NetName=VREF Pin=U7-6
+Added Pin To Net: NetName=+5 Pin=U7-7
+Added Pin To Net: NetName=NetRos3_2 Pin=U7-8
+Added Member To Class: ClassName=2021 Member=Component C31 Cap2
+Added Member To Class: ClassName=2021 Member=Component C42 Cap2
+Added Member To Class: ClassName=2021 Member=Component C61 Cap2
+Added Member To Class: ClassName=2021 Member=Component C62 Cap2
+Added Member To Class: ClassName=TPS5403 Member=Component P2 ENABLE
+Added Member To Class: ClassName=2021 Member=Component U3 AD620ANZ
+Added Member To Class: ClassName=2021 Member=Component U4 opa2727
+Added Member To Class: ClassName=2021 Member=Component U5 opa2727
+Added Member To Class: ClassName=2021 Member=Component U7 opa2727

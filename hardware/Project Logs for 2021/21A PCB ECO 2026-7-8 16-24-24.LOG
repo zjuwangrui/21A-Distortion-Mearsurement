@@ -1,0 +1,14 @@
+Change Component Footprint: Designator=C31 Old Footprint=CAPR5-4X5 New Footprint=RAD0.2
+Change Component Footprint: Designator=C32 Old Footprint=CAPR5-4X5 New Footprint=RAD0.2
+Added Component: Designator=U1(SO-8)
+Added Pin To Net: NetName=NetC3_2 Pin=U1-1
+Added Pin To Net: NetName=NetR2_1 Pin=U1-4
+Added Pin To Net: NetName=NetP2_1 Pin=U1-5
+Added Pin To Net: NetName=NetC2_1 Pin=U1-6
+Added Pin To Net: NetName=NetC1_2 Pin=U1-7
+Added Pin To Net: NetName=NetC3_1 Pin=U1-8
+Added Member To Class: ClassName=2021 Member=Component C7 Cap2
+Added Member To Class: ClassName=2021 Member=Component C10 Cap2
+Added Member To Class: ClassName=2021 Member=Component r4 Res1
+Added Member To Class: ClassName=2021 Member=Component r5 Res1
+Added Member To Class: ClassName=TPS5403 Member=Component U1 TPS5430

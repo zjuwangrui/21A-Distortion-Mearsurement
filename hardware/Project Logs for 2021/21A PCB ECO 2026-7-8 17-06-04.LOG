@@ -1,0 +1,17 @@
+Added Component: Designator=J1(SIP3)
+Added Component: Designator=U1(SO-8)
+Added Component: Designator=Vi(HDR1X2)
+Added Pin To Net: NetName=-5 Pin=J1-1
+Added Pin To Net: NetName=GND Pin=J1-2
+Added Pin To Net: NetName=+5 Pin=J1-3
+Added Pin To Net: NetName=NetC3_2 Pin=U1-1
+Added Pin To Net: NetName=NetR2_1 Pin=U1-4
+Added Pin To Net: NetName=NetP2_1 Pin=U1-5
+Added Pin To Net: NetName=NetC2_1 Pin=U1-6
+Added Pin To Net: NetName=NetC1_2 Pin=U1-7
+Added Pin To Net: NetName=NetC3_1 Pin=U1-8
+Added Pin To Net: NetName=NetC7_2 Pin=Vi-1
+Added Pin To Net: NetName=NetC7_2 Pin=Vi-2
+Added Member To Class: ClassName=2021 Member=Component J1 power
+Added Member To Class: ClassName=TPS5403 Member=Component U1 TPS5430
+Added Member To Class: ClassName=2021 Member=Component Vi Header 2
