@@ -10,8 +10,11 @@ static uint16_t    *s_fft_buf     = 0;
 static uint16_t     s_fft_len     = 0;
 static bool         s_fft_running = false;
 
-/* ADC1 基础初始化：只使能时钟 + 设分频。
- * 具体 HAL_ADC_Init 在 ADC_StartFFT 里做（那时才知道触发源和通道）。 */
+/* ADC1 基础初始化：时钟 + 分频 + 输入引脚模拟模式。
+ * 具体 HAL_ADC_Init 在 ADC_StartFFT 里做（那时才知道触发源和通道）。
+ *
+ * 本项目输入引脚：PC1 (ADC1_IN11)。换脚时同时改这里的 GPIO + main.c
+ * 里 thd_configure(通道号, ...) 两处。 */
 void MX_ADC1_Init(void)
 {
     __HAL_RCC_ADC1_CLK_ENABLE();
@@ -21,6 +24,14 @@ void MX_ADC1_Init(void)
      * 为达到 THD 采样 1 MHz，选 /4；线性度可能略降，
      * 若测出的 THD 明显偏大，回退到 /6 并把 Fs 降到 500 kHz 复测对比。 */
     __HAL_RCC_ADC_CONFIG(RCC_ADCPCLK2_DIV4);   /* 72/4 = 18 MHz (over-spec) */
+
+    /* ---- 输入引脚：PC1 → ADC1_IN11 ---- */
+    __HAL_RCC_GPIOC_CLK_ENABLE();
+    GPIO_InitTypeDef g = {0};
+    g.Pin  = GPIO_PIN_1;
+    g.Mode = GPIO_MODE_ANALOG;
+    g.Pull = GPIO_NOPULL;                       /* 模拟输入应关闭上下拉 */
+    HAL_GPIO_Init(GPIOC, &g);
 }
 
 void ADC_SetFFTCallback(adc_fft_cb_t cb) { s_fft_cb = cb; }

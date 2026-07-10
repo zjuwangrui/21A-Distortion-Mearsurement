@@ -7,9 +7,13 @@
 
 /* ===== ADC1 高速采样服务 =====
  *
- * ADC1 通过 TIM3 TRGO 触发，DMA1_Ch1 循环搬运。
- * 单通道，采样率可配（默认 40kHz），双缓冲：半满/全满
- * 中断分别调用 fft_feed（或用户注册的回调）。
+ * 本项目 THD 输入 → PC1 (ADC1_IN11)
+ *   ADC1 通过 TIM3 TRGO 触发，DMA1_Ch1 循环搬运。
+ *   单通道，采样率可配（默认 1 MHz，需 ADCCLK=18MHz 超规），
+ *   双缓冲：半满/全满中断分别调用用户注册的回调。
+ *
+ * 输入引脚 (PC1) 的 GPIO 配置放在 MX_ADC1_Init 里，随 ADC 一起初始化，
+ * 换脚就同时改 MX_ADC1_Init 里的 GPIO 配置 + main.c 里 thd_configure 的 channel。
  *
  * 需要慢速传感器（电压/温度/光敏等）另开 ADC2 或走 GPIO/I2C。
  * 框架故意不再提供 ADC1 轮询接口 —— 避免与 DMA 模式互相打架。

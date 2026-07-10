@@ -1,0 +1,20 @@
+{
+  "expo": {
+    "name": "THD Meter",
+    "slug": "thd-meter-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "splash": {
+      "backgroundColor": "#0D47A1"
+    },
+    "android": {
+      "usesCleartextTraffic": true,
+      "package": "com.zju.thdmeter"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "c03f5e08-0fde-4e0a-84ab-ed4f12241b7a"
+      }
+    }
+  }
+}

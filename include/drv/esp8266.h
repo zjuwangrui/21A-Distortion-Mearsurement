@@ -6,9 +6,9 @@
 #include <stdbool.h>
 
 /* ===== 用户配置（按实际环境修改） ===== */
-#define AP_SSID           "VTL_Sensor"
+#define AP_SSID           "21Athd-calculation"
 #define AP_PASS           "12345678"
-#define PHONE_IP          "192.168.1.2"
+#define PHONE_IP          "192.168.4.2"       /* 手机连热点后默认 IP */
 #define PHONE_PORT        8080
 
 #define ESP_TIMEOUT_SHORT 3000U   /* ms */
@@ -48,10 +48,22 @@ typedef struct {
 
 extern ESP_Stats g_esp_stats;
 
-/* ===== 公开接口 ===== */
+/* ===== 公开接口 =====
+ *
+ * ESP_Init:
+ *   建热点、进入 TCP 模式。开机调一次，阻塞 3-15 秒。
+ *
+ * ESP_PostThd:
+ *   把 THD 结果 POST 给手机（HTTP /thd）。500ms ~ 1s 周期调用即可。
+ *   f0/thd 是当前值，h[5] 是 5 次谐波幅度（未归一化），p[5] 是相位（rad）。
+ *   阻塞 ~200 ms 到几秒；出错返回非零。
+ *
+ * ESP_PostSensor:
+ *   老 VTL 项目的接口，保留不动方便以后参考；THD 项目不用调。
+ */
 ESP_Result ESP_Init(void);
-/* voltage: 电压V, led_on: LED状态, light: 光照原始值0-4095, temp: 温度°C
- * out_thr: 返回电压阈值, out_light_thr: 返回光照阈值, out_temp_thr: 返回温度阈值 */
+ESP_Result ESP_PostThd(float f0_hz, float thd_percent,
+                       const float *h5, const float *p5);
 ESP_Result ESP_PostSensor(float voltage, bool led_on, uint32_t light,
                           uint8_t temp,
                           float *out_thr, uint32_t *out_light_thr,

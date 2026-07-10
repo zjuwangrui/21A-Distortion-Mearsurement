@@ -33,9 +33,9 @@
  */
 
 #define THD_N_POINTS         1024U
-#define THD_DEFAULT_FS_HZ    40000U
-#define THD_DEFAULT_CHANNEL  1U       /* ADC_CHANNEL_1 = PA1 */
-#define THD_MAX_HARMONIC     5        /* 算到 5 次谐波 */
+#define THD_DEFAULT_FS_HZ    1000000U   /* 1 MHz，需要 ADCCLK=18MHz 超规 */
+#define THD_DEFAULT_CHANNEL  11U        /* ADC_CHANNEL_11 = PC1 */
+#define THD_MAX_HARMONIC     5          /* 算到 5 次谐波 */
 
 typedef struct {
     float    f0_hz;                                /* 检测到的基频 Hz            */

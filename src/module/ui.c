@@ -1,5 +1,6 @@
 #include "module/ui.h"
 #include "module/thd.h"
+#include "drv/esp8266.h"
 #include "bsp/lcd.h"
 #include "stm32f1xx_hal.h"
 #include <string.h>
@@ -19,12 +20,8 @@ static bool             s_dirty      = true;   /* 需要 enter() 一次 */
 static void welcome_enter(void)
 {
     LCD_Clear(BLACK);
-    LCD_DrawTextC( 40,  30, YELLOW, BLACK, "STM32 App Framework");
+    LCD_DrawTextC( 40,  30, YELLOW, BLACK, "STM32 is working normally!");
     LCD_DrawTextC( 40,  55, WHITE,  BLACK, "----------------------------");
-    LCD_DrawTextC( 40,  80, WHITE,  BLACK, "core   : scheduler + ring");
-    LCD_DrawTextC( 40,  98, WHITE,  BLACK, "module : terminal + thd + ui");
-    LCD_DrawTextC( 40, 116, WHITE,  BLACK, "bsp    : uart + adc + lcd + led");
-    LCD_DrawTextC( 40, 150, GREEN,  BLACK, "Type 'help' on USART1 to start");
 }
 
 static void welcome_tick(void)
@@ -43,15 +40,17 @@ static const ui_page_t s_welcome = {
  *  Page 2: THD 显示
  *
  *  布局（320×240 横屏）：
- *   y=  0   Title "THD Meter (Goertzel)"                  16 px
- *   y= 20   ┌ waveform 320×50 (5 次谐波重建) ┐            50 px
- *   y= 80   f0 值 + THD 值                                  16 px
- *   y=100   H1 bar + 数值                                   16 px
- *   y=120   H2                                              16 px
- *   y=140   H3
- *   y=160   H4
- *   y=180   H5
- *   y=210   Frame # / Fs / RUN|STOP                         16 px
+ *   y=  0   Title "THD Meter (Goertzel + Reconstruction)"     16 px
+ *   y= 20   waveform 320×50，画  1 个基频周期                    50 px
+ *   y= 72   f0                                                   16 px
+ *   y= 92   THD                                                  16 px
+ *   y=112   "Normalized (Uk/U1):"                                16 px
+ *   y=130   H1  1.0000                                           16 px
+ *   y=148   H2  0.0324
+ *   y=166   H3  0.0152
+ *   y=184   H4  0.0056
+ *   y=202   H5  0.0031
+ *   y=222   Frame # / Fs / RUN|STOP                              16 px
  * ============================================================ */
 
 /* --- 波形显示参数 --- */
@@ -60,19 +59,21 @@ static const ui_page_t s_welcome = {
 #define WAVE_W              320       /* 全屏宽 */
 #define WAVE_H               50
 #define WAVE_CENTER_Y       (WAVE_Y + WAVE_H / 2)
-#define WAVE_PIX_PER_PERIOD  160      /* 屏上显示 2 个周期 (320/160=2) */
+#define WAVE_PIX_PER_PERIOD  320      /* 屏上显示 1 个周期 (题目要求) */
 #define WAVE_HALF_H         (WAVE_H / 2 - 2)     /* 波形垂直半幅像素 */
 
-/* --- 数值/条形参数 --- */
-#define THD_BAR_X       40
-#define THD_BAR_MAX_W  180
-#define THD_BAR_H       12
-#define THD_VAL_X      230
-#define THD_H1_Y       100
-#define THD_ROW_DY      20
+/* --- f0 / THD 独立行 --- */
+#define F0_Y                72
+#define THD_Y               92
 
-/* 每个谐波上一次画的条宽，用于差量重画 */
-static int      s_last_bar_w[THD_MAX_HARMONIC] = {0};
+/* --- 归一化幅值显示参数 --- */
+#define NORM_HEADER_Y  112          /* "Normalized (Uk/U1):" 标题 */
+#define NORM_H1_Y      130          /* 第一行 H1 */
+#define NORM_ROW_DY     18          /* 行间距 */
+#define NORM_LABEL_X     4          /* "Hk" 起始列 */
+#define NORM_VALUE_X    40          /* 数值起始列 */
+
+#define STATUS_Y       222
 
 /* 上一次绘制波形对应的 frame_id；相同则跳过重画避免闪烁 */
 static uint32_t s_last_wave_frame = 0xFFFFFFFFU;
@@ -152,13 +153,14 @@ static void thd_enter(void)
     /* 波形区域先画一条中线占位 */
     LCD_FillRect(WAVE_X, WAVE_CENTER_Y, WAVE_W, 1, BLUE);
 
-    /* 谐波标签 H1..H5 */
+    /* 归一化幅值区标题 + 5 行标签（Uk/U1） */
+    LCD_DrawTextC(NORM_LABEL_X, NORM_HEADER_Y, YELLOW, BLACK,
+                  "Normalized  Uk/U1 :");
     for (int k = 0; k < THD_MAX_HARMONIC; ++k) {
-        LCD_DrawTextf(4, THD_H1_Y + k * THD_ROW_DY, WHITE, BLACK,
+        LCD_DrawTextf(NORM_LABEL_X, NORM_H1_Y + k * NORM_ROW_DY, WHITE, BLACK,
                       "H%d", k + 1);
     }
 
-    for (int k = 0; k < THD_MAX_HARMONIC; ++k) s_last_bar_w[k] = 0;
     s_last_wave_frame = 0xFFFFFFFFU;    /* 强制首帧重画波形 */
 }
 
@@ -166,46 +168,41 @@ static void thd_tick(void)
 {
     const thd_result_t *r = thd_get_result();
 
-    /* --- 波形：只在有新帧时重画 --- */
+    /* --- 波形（1 个基频周期）：只在有新帧时重画 --- */
     if (r->frame_id != s_last_wave_frame) {
         s_last_wave_frame = r->frame_id;
         wave_redraw(r);
     }
 
-    /* --- 第二行：f0 / THD --- */
-    LCD_DrawTextf(  4,  80, GREEN, BLACK, "f0:%6.1f Hz  ", (double)r->f0_hz);
-    LCD_DrawTextf(170,  80, r->thd_percent > 5.0f ? RED : GREEN, BLACK,
-                   "THD:%5.2f %%  ", (double)r->thd_percent);
+    /* --- f0 / THD 各占一行，字符宽松，避免挤 --- */
+    LCD_DrawTextf(  4, F0_Y,  GREEN, BLACK,
+                   "f0 :  %8.2f  kHz    ", (double)r->f0_hz / 1000.0);
+    LCD_DrawTextf(  4, THD_Y, r->thd_percent > 5.0f ? RED : GREEN, BLACK,
+                   "THD:  %8.3f  %%     ", (double)r->thd_percent);
 
-    /* --- 谐波条 + 数值 --- */
-    float h1 = r->harmonic[0];
-    if (h1 < 1e-3f) h1 = 1.0f;
+    /* --- 归一化谐波幅值：Uk/U1 ---
+     * H1 = 1.0000 恒定；H2..H5 显示 Um_k / Um_1 (4 位小数)。
+     * H1 极小 (无信号) 时全显 0，避免除零抖动。 */
+    float u1 = r->harmonic[0];
+    bool has_signal = (u1 >= 1e-3f);
 
     for (int k = 0; k < THD_MAX_HARMONIC; ++k) {
-        float ratio = r->harmonic[k] / h1;
-        if (ratio > 1.0f) ratio = 1.0f;
-        int   w   = (int)(ratio * THD_BAR_MAX_W);
-        int   y   = THD_H1_Y + k * THD_ROW_DY;
-
-        /* 差量重画：只擦掉/补上变化部分，减少闪烁 */
-        if (w < s_last_bar_w[k]) {
-            LCD_FillRect(THD_BAR_X + w, y,
-                         s_last_bar_w[k] - w, THD_BAR_H, BLACK);
-        } else if (w > s_last_bar_w[k]) {
-            LCD_FillRect(THD_BAR_X + s_last_bar_w[k], y,
-                         w - s_last_bar_w[k], THD_BAR_H, GREEN);
-        }
-        s_last_bar_w[k] = w;
-
-        LCD_DrawTextf(THD_VAL_X, y, WHITE, BLACK, "%7.1f", (double)r->harmonic[k]);
+        float norm = has_signal ? (r->harmonic[k] / u1) : 0.0f;
+        LCD_DrawTextf(NORM_VALUE_X, NORM_H1_Y + k * NORM_ROW_DY,
+                      k == 0 ? GREEN : WHITE, BLACK,
+                      "%.4f  ", (double)norm);
     }
 
-    /* --- 状态栏 --- */
-    LCD_DrawTextf(4, 210, WHITE, BLACK,
-                  "#%lu  Fs=%lu Hz  %s   ",
+    /* --- 状态栏（左侧：帧号+采样率+RUN；右侧：ESP 状态）--- */
+    LCD_DrawTextf(4, STATUS_Y, WHITE, BLACK,
+                  "#%lu  Fs=%lu  %s   ",
                   (unsigned long)r->frame_id,
                   (unsigned long)r->fs_hz,
                   thd_is_running() ? "RUN " : "STOP");
+
+    /* ESP 状态：直接打字，读出来就知道 OK 还是 FAIL */
+    LCD_DrawTextC(238, STATUS_Y, WHITE, BLACK,
+                  g_esp_stats.ap_ready ? " ESP OK  " : " ESP FAIL");
 }
 
 static const ui_page_t s_thd_page = {
