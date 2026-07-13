@@ -8,8 +8,8 @@
         {
             "name": "PlatformIO",
             "includePath": [
-                "C:/Users/lenovo/WPSDrive/1639471701/WPS企业云盘/浙江大学/我的企业文档/校内外活动/电赛/选题/21年国赛A题信号失真度测量装置/src",
-                "C:/Users/lenovo/WPSDrive/1639471701/WPS企业云盘/浙江大学/我的企业文档/校内外活动/电赛/选题/21年国赛A题信号失真度测量装置/include",
+                "D:/constructing_projects/21A-Distortion-Mearsurement/src",
+                "D:/constructing_projects/21A-Distortion-Mearsurement/include",
                 "D:/platformio/packages/framework-stm32cubef1/Drivers/CMSIS/Include",
                 "D:/platformio/packages/framework-stm32cubef1/Drivers/CMSIS/Device/ST/STM32F1xx/Include",
                 "D:/platformio/packages/framework-stm32cubef1/Drivers/STM32F1xx_HAL_Driver/Inc",
@@ -61,8 +61,8 @@
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
-                    "C:/Users/lenovo/WPSDrive/1639471701/WPS企业云盘/浙江大学/我的企业文档/校内外活动/电赛/选题/21年国赛A题信号失真度测量装置/src",
-                    "C:/Users/lenovo/WPSDrive/1639471701/WPS企业云盘/浙江大学/我的企业文档/校内外活动/电赛/选题/21年国赛A题信号失真度测量装置/include",
+                    "D:/constructing_projects/21A-Distortion-Mearsurement/src",
+                    "D:/constructing_projects/21A-Distortion-Mearsurement/include",
                     "D:/platformio/packages/framework-stm32cubef1/Drivers/CMSIS/Include",
                     "D:/platformio/packages/framework-stm32cubef1/Drivers/CMSIS/Device/ST/STM32F1xx/Include",
                     "D:/platformio/packages/framework-stm32cubef1/Drivers/STM32F1xx_HAL_Driver/Inc",

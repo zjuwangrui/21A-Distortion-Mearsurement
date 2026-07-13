@@ -6,34 +6,32 @@
 
 /*
  * ===========================================================================
- *  THD 测量模块（基于 Goertzel）
+ *  THD 测量模块（基于 Goertzel + Hann 窗 + Auto-Fs + EMA 平滑）
  * ===========================================================================
  *
  * 输入通路：
- *   ADC1 (TIM3 触发 40kHz) → DMA1 双缓冲 → thd_feed()（ISR 上下文）
+ *   ADC1（TIM3 触发）→ DMA1 双缓冲 → on_adc_frame（ISR）
+ *   帧内：去 DC + 加 Hann 窗后写入 s_frame
  *
  * 处理流程（thd_task 里）：
- *   1) 两级 Goertzel 扫描找出基频 f0
- *      - 粗扫：50 Hz 起，50 Hz 步长，扫到 4 kHz（保证 5 次谐波仍在 Nyquist 内）
- *      - 细扫：粗扫峰值 ±50 Hz 内，5 Hz 步长
- *      - 抛物线插值：3 点拟合，精度 ~0.5 Hz
- *   2) 用 f0 算 1..5 次谐波幅度 H[0]..H[4]
- *   3) THD = sqrt(H2²+H3²+H4²+H5²) / H1 × 100
+ *   1) 两级 Goertzel 扫描找 f0（步长/范围随 Fs 动态调整）
+ *   2) 复数 Goertzel 算 H1..H5 幅度和相位
+ *   3) EMA 一阶低通平滑（α=0.15，约 6~8 帧收敛）
+ *   4) Auto-Fs：根据 f0 从档位表里挑最合适的 Fs（保证 Fs ≥ 50·f0），
+ *      至少间隔 5 帧才允许再改，避免抖档
+ *   5) THD = √(H2²+H3²+H4²+H5²) / H1 × 100 %
  *
- * 用法（与 fft 模块并存但互斥使用 ADC1）：
- *   thd_start();          // 独占 ADC，开始采样
+ * 用法：
+ *   thd_start();          // 独占 ADC，开始采样（auto-Fs 会自动追频）
  *   ...
- *   const thd_result_t *r = thd_get_result();
+ *   const thd_result_t *r = thd_get_result();  // 拿到 EMA 后的稳定值
  *   ...
  *   thd_stop();
- *
- * Terminal:
- *   thd.start / thd.stop / thd.info / thd.config <ch> <fs>
  * ===========================================================================
  */
 
-#define THD_N_POINTS         1024U
-#define THD_DEFAULT_FS_HZ    1000000U   /* 1 MHz，需要 ADCCLK=18MHz 超规 */
+#define THD_N_POINTS         2048U
+#define THD_DEFAULT_FS_HZ    1000000U   /* 1 MHz 起步，auto-Fs 会按 f0 自动降档 */
 #define THD_DEFAULT_CHANNEL  11U        /* ADC_CHANNEL_11 = PC1 */
 #define THD_MAX_HARMONIC     5          /* 算到 5 次谐波 */
 

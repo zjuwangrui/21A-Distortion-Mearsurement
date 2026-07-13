@@ -1,0 +1,14 @@
+LTspice 24.1.10 for Windows
+Circuit: D:\constructing_projects\21A-Distortion-Mearsurement\hardware\stimulation\filter.net
+Start Time: Mon Jul 13 18:53:15 2026
+solver = Normal
+Maximum thread count: 16
+tnom = 27
+temp = 27
+method = trap
+Direct Newton iteration for .op point succeeded.
+Total elapsed time: 0.217 seconds.
+
+Files loaded:
+D:\constructing_projects\21A-Distortion-Mearsurement\hardware\stimulation\filter.net
+

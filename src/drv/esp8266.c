@@ -61,7 +61,6 @@ static ESP_Result esp_wait_for(const char *expect, uint32_t timeout_ms)
         }
         if (strstr(acc, expect))   return ESP_OK;
         if (strstr(acc, "ERROR")) {
-            UART_Printf("[ESP] ERR  cmd=\"%s\" raw=[%.*s]\r\n", expect, (int)idx, acc);
             return ESP_ERR_AT;
         }
         if (strstr(acc, "FAIL")) {

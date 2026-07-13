@@ -49,22 +49,30 @@ export default function App() {
     });
   }, []);
 
-  /* 启动初始化：获取本机 IP，方便对照 STM32 端 PHONE_IP */
-  useEffect(() => {
-    addLog('系统启动');
-    addLog(`需连接 WiFi: "${AP_SSID}"`);
-    Network.getIpAddressAsync()
+  /* 拉取当前网卡 IP。切 WiFi 后要重新调用一次，才能拿到新接口的 IP */
+  const refreshIp = useCallback(() => {
+    return Network.getIpAddressAsync()
       .then(ip => {
         const addr = ip ?? '--';
         setMyIp(addr);
         addLog(`✓ 手机 IP: ${addr}`);
-        addLog('点击"启动服务器"开始监听 STM32 数据');
+        return addr;
       })
       .catch(() => {
         setMyIp('获取失败');
         addLog('✗ IP 获取失败，请检查 WiFi 连接');
+        return null;
       });
   }, [addLog]);
+
+  /* 启动时先展示一次 IP，方便用户对照 STM32 端 PHONE_IP */
+  useEffect(() => {
+    addLog('系统启动');
+    addLog(`需连接 WiFi: "${AP_SSID}"`);
+    refreshIp().then(() => {
+      addLog('切到 AP 后点击"启动服务器"开始监听 STM32 数据');
+    });
+  }, [addLog, refreshIp]);
 
   /* STM32 每次上报都会走这里 */
   const handleThdData = useCallback((data: ThdData) => {
@@ -85,6 +93,7 @@ export default function App() {
       addLog('--- 服务器已停止 ---');
     } else {
       addLog('正在启动 TCP 服务器...');
+      refreshIp();  // 切完 WiFi 后重新取一次当前网卡 IP
       startServer(SERVER_PORT, {
         onData: handleThdData,
         onLog: addLog,
@@ -98,7 +107,7 @@ export default function App() {
       });
       setServerRunning(true);
     }
-  }, [serverRunning, addLog, handleThdData]);
+  }, [serverRunning, addLog, handleThdData, refreshIp]);
 
   const lastUpdateStr = lastUpdate
     ? `最近更新: ${lastUpdate.toLocaleTimeString('zh-CN', {hour12: false})}`

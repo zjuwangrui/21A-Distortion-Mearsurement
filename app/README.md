@@ -82,7 +82,8 @@ npm install       # 首次
 npm start         # 启动 Expo Dev Server
 # 用 Expo Go 扫码，或 npm run android 直接跑到 Android 设备
 ```
-
+D:\constructing_projects\21A-Distortion-Mearsurement\app\android\gradlew.bat assembleRelease
+npx eas build --profile development --platform android
 **注意**：`react-native-tcp-socket` 不是纯 JS，Expo Go 里跑不了，需要 `expo prebuild` + `expo run:android`（或 EAS Build）。
 
 ## 常见问题

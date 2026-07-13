@@ -1,0 +1,9 @@
+Added Component: Designator=gnd(SIP2)
+Added Component: Designator=Rg(AXIAL0.4)
+Added Pin To Net: NetName=NetU4_3 Pin=Rg-2
+Change Net Name : Old Net Name=NetU4_3 New Net Name=NetRg_2
+Added Pin To Net: NetName=Netgnd_1 Pin=gnd-1
+Added Pin To Net: NetName=Netgnd_1 Pin=Rg-1
+Added Net: Name=Netgnd_1
+Added Member To Class: ClassName=buffer Member=Component gnd Header 2
+Added Member To Class: ClassName=buffer Member=Component Rg 10k
