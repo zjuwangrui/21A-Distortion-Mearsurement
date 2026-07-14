@@ -8,7 +8,7 @@
 /* ===== 用户配置（按实际环境修改） ===== */
 #define AP_SSID           "21Athd-calculation"
 #define AP_PASS           "12345678"
-#define PHONE_IP          "192.168.4.2"       /* 手机连热点后默认 IP */
+#define PHONE_IP          "192.168.1.2"       /* 手机连热点后默认 IP */
 #define PHONE_PORT        8080
 
 #define ESP_TIMEOUT_SHORT 3000U   /* ms */

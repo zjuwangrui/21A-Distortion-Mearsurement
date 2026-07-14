@@ -28,7 +28,7 @@
 
 /* 打开这个宏，thd_task 每 N 帧向 UART 打印一行诊断信息，方便查 auto-Fs / 泄漏问题 */
 #define THD_DEBUG_LOG        1
-#define THD_DEBUG_EVERY_N    30
+#define THD_DEBUG_EVERY_N    10
 
 /* 调试开关：设 0 = 旁路 Hann 窗（等效于矩形窗，跟老代码一样）
  *          设 1 = 加 Hann 窗（默认，压泄漏）
@@ -36,7 +36,7 @@
 #define THD_USE_HANN_WINDOW  1
 
 /* Auto-Fs 保护：启动后先给这么久让 ADC / EMA 稳定，之后才允许切档 */
-#define AUTO_FS_WARMUP_MS    5000U
+#define AUTO_FS_WARMUP_MS    2000U
 
 /* Auto-Fs 保护：H1 幅度小于这个门槛说明没检测到有效信号，不切档
  * （Q15 加窗后的相对幅度；量级取决于信号大小，30~50 是保守值）*/
@@ -79,7 +79,7 @@ static void update_scan_params(uint32_t fs_hz)
     if (bw < 10.0f) bw = 10.0f;
     s_coarse_step_hz  = bw;
     s_coarse_start_hz = bw;
-    s_fine_range_hz   = bw;
+    s_fine_range_hz   = bw * 0.5f;    /* 粗定位精度是 ±bw/2，细扫覆盖这个就够 */
     s_fine_step_hz    = bw * 0.1f;
     if (s_fine_step_hz < 1.0f) s_fine_step_hz = 1.0f;
 }
@@ -107,9 +107,10 @@ static uint32_t select_fs_for_f0(float f0_hz)
 
 /* ============================ EMA 平滑状态 ============================ */
 
-/* 显示层平滑：EMA 一阶低通，α=0.15，约等于 6~8 帧平均。
+/* 显示层平滑：EMA 一阶低通，α=0.30，约等于 3~4 帧半衰期，7 帧收敛到 90%。
+ * 早期版本用 0.15（更平滑但更慢），为满足"10s 内出结果"提到 0.30。
  * 相位不用标量 EMA（跨 ±π 边界会跳），用复数分量 EMA 后再 atan2。*/
-#define EMA_ALPHA        0.15f
+#define EMA_ALPHA        0.30f
 #define EMA_ALPHA_INV    (1.0f - EMA_ALPHA)
 
 static float s_ema_f0        = 0.0f;
@@ -125,8 +126,9 @@ static void ema_reset(void)
     s_ema_primed = false;
 }
 
-/* Auto-Fs 切换的节流：连续 N 帧不改 Fs，避免频繁停/开 ADC。*/
-#define AUTO_FS_MIN_FRAMES_BETWEEN_CHANGES  5
+/* Auto-Fs 切换的节流：连续 N 帧不改 Fs，避免频繁停/开 ADC。
+ * 从 5 缩短到 2 以加快最终 Fs 收敛（原本 3 档收敛 15 帧，现在 6 帧）。*/
+#define AUTO_FS_MIN_FRAMES_BETWEEN_CHANGES  2
 static uint32_t s_frames_since_change = 0;
 static uint32_t s_start_tick_ms       = 0;
 
