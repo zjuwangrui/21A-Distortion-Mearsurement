@@ -35,6 +35,14 @@
  * 用来定位"加 Hann 后 f0 就错"的问题。*/
 #define THD_USE_HANN_WINDOW  1
 
+/* 差分脉冲检测滤波：
+ * 检测"一个大正差紧接一个大负差"的图案（典型尖峰特征），
+ * 用邻居的均值替换掉尖峰点。阈值自适应帧内平均变化。
+ * 对偶发的窄尖峰（1~2 样本宽）有效；宽噪声、连续噪声无效。
+ * 设 0 = 关闭；1 = 打开。*/
+#define THD_USE_SPIKE_FILTER    1
+#define THD_SPIKE_THRESHOLD_MUL 4    /* 阈值 = 4 × 帧内平均相邻差分绝对值 */
+
 /* Auto-Fs 保护：启动后先给这么久让 ADC / EMA 稳定，之后才允许切档 */
 #define AUTO_FS_WARMUP_MS    2000U
 
@@ -134,11 +142,56 @@ static uint32_t s_start_tick_ms       = 0;
 
 /* ============================ ISR 回调 ============================ */
 
+#if THD_USE_SPIKE_FILTER
+/* 差分脉冲检测：找出"大正差紧接大负差"图案（真尖峰特征），用邻居均值替换。
+ * 阈值自适应：4 × 帧内平均绝对差分。低 f0 信号阈值小、高 f0 信号阈值大，都能工作。
+ * 帧长度 n 应 >= 5。就地修改 raw[]，DMA 下轮会覆盖，无副作用。
+ * 返回：本帧检测到的尖峰数量（可通过 UART 观测）。*/
+static uint32_t spike_filter_adaptive(uint16_t *raw, uint16_t n)
+{
+    if (n < 5) return 0;
+
+    /* 第 1 pass：计算平均绝对差分 */
+    uint32_t sum_abs = 0;
+    for (uint16_t i = 1; i < n; ++i) {
+        int32_t d = (int32_t)raw[i] - (int32_t)raw[i - 1];
+        sum_abs += (d < 0) ? (uint32_t)(-d) : (uint32_t)d;
+    }
+    uint32_t avg_abs_diff = sum_abs / (n - 1);
+    if (avg_abs_diff < 4) avg_abs_diff = 4;      /* 静态信号时给个下限，防止阈值太小误报 */
+    int32_t threshold = (int32_t)(THD_SPIKE_THRESHOLD_MUL * avg_abs_diff);
+
+    /* 第 2 pass：检测脉冲图案（+跳变紧接-跳变，或反之）并插值替换 */
+    uint32_t spike_count = 0;
+    for (uint16_t i = 1; i < n - 1; ++i) {
+        int32_t d_prev = (int32_t)raw[i]     - (int32_t)raw[i - 1];
+        int32_t d_next = (int32_t)raw[i + 1] - (int32_t)raw[i];
+        int32_t abs_prev = (d_prev < 0) ? -d_prev : d_prev;
+        int32_t abs_next = (d_next < 0) ? -d_next : d_next;
+        /* 两个差都超阈值 AND 符号相反 → 是脉冲尖峰 */
+        if (abs_prev > threshold && abs_next > threshold
+            && ((d_prev > 0) != (d_next > 0))) {
+            raw[i] = (uint16_t)(((uint32_t)raw[i - 1] + (uint32_t)raw[i + 1]) / 2);
+            spike_count++;
+        }
+    }
+    return spike_count;
+}
+
+/* 帧内检测到的尖峰数，可选上报 UART */
+static volatile uint32_t s_last_spike_count = 0;
+#endif
+
 /* 由 bsp/adc.c 在 DMA 半满 / 满中断里调用，n = THD_N_POINTS */
 static void on_adc_frame(const uint16_t *raw, uint16_t n)
 {
     if (n != THD_N_POINTS) return;
     if (s_frame_ready) return;     /* 上一帧还没处理，丢弃本帧避免竞态 */
+
+#if THD_USE_SPIKE_FILTER
+    /* 差分脉冲检测。就地滤波：DMA 缓冲下一轮会覆盖，安全。*/
+    s_last_spike_count = spike_filter_adaptive((uint16_t *)raw, n);
+#endif
 
     /* 12-bit ADC 无符号 (0..4095) → int16 有符号并去直流。
      * DC 只影响 0Hz bin，我们从 50Hz 起扫描不受影响，但去掉后计算更干净。 */
@@ -406,7 +459,7 @@ void thd_task(void)
 #if THD_DEBUG_LOG
     if ((raw.frame_id % THD_DEBUG_EVERY_N) == 0) {
         UART_Printf("[thd] fid=%lu Fs=%lu raw_f0=%.1f ema_f0=%.1f THD=%.2f%% "
-                    "H=[%.0f %.0f %.0f %.0f %.0f]\r\n",
+                    "H=[%.0f %.0f %.0f %.0f %.0f] spikes=%lu\r\n",
                     (unsigned long)raw.frame_id,
                     (unsigned long)s_fs_hz,
                     (double)raw.f0_hz,
@@ -414,7 +467,13 @@ void thd_task(void)
                     (double)s_ema_thd,
                     (double)s_ema_h[0], (double)s_ema_h[1],
                     (double)s_ema_h[2], (double)s_ema_h[3],
-                    (double)s_ema_h[4]);
+                    (double)s_ema_h[4],
+#if THD_USE_SPIKE_FILTER
+                    (unsigned long)s_last_spike_count
+#else
+                    0UL
+#endif
+                    );
     }
 #endif
 
