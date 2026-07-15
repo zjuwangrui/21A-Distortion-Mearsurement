@@ -43,6 +43,12 @@
 #define THD_USE_SPIKE_FILTER    1
 #define THD_SPIKE_THRESHOLD_MUL 4    /* 阈值 = 4 × 帧内平均相邻差分绝对值 */
 
+/* Auto-Fs 使能：
+ * 设 0 = 禁用 auto-Fs，固定用启动时的 Fs（避免 50k 遇 Fs=50k 的混叠死循环）
+ * 设 1 = 打开自适应，Fs 会根据 f0 自动降档以提高低频精度
+ * 若 f0 范围窄（比如 1k~50k）且 Fs=1M 就够覆盖，直接禁用最省事。*/
+#define THD_ENABLE_AUTO_FS   0
+
 /* Auto-Fs 保护：启动后先给这么久让 ADC / EMA 稳定，之后才允许切档 */
 #define AUTO_FS_WARMUP_MS    2000U
 
@@ -478,6 +484,9 @@ void thd_task(void)
 #endif
 
     /* -------- 5) Auto-Fs 判定：拿 EMA 后的 f0 更稳，不容易抖档 -------- */
+#if !THD_ENABLE_AUTO_FS
+    return;    /* 禁用 auto-Fs：固定 Fs，避免混叠陷阱 */
+#endif
     s_frames_since_change++;
 
     /* Warmup：启动后先让 ADC / EMA 稳定 5 秒，防止冷启动的垃圾数据把 Fs 带偏 */
