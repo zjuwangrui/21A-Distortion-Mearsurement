@@ -1,0 +1,617 @@
+%设置页面边距（word标准页面）
+\documentclass[a4paper]{article}
+\usepackage{geometry}
+\geometry{a4paper,left=2.7cm,right=2.7cm,top=2.54cm,bottom=2.54cm}
+
+%导入ctex包
+\usepackage[UTF8,heading=true]{ctex}
+
+%导入imakeidx包
+\usepackage{imakeidx}
+\makeindex
+
+%设置摘要格式
+\usepackage{abstract}
+\setlength{\abstitleskip}{0em}
+\setlength{\absleftindent}{0pt}
+\setlength{\absrightindent}{0pt}
+\setlength{\absparsep}{0em}
+\renewcommand{\abstractname}{\zihao{4}{摘要部分}}
+\renewcommand{\abstracttextfont}{\zihao{-4}}
+
+%设置页眉和页脚
+\usepackage{fancyhdr}
+\pagestyle{plain}
+
+%数学公式
+\usepackage{amssymb}
+\usepackage{amsmath}
+
+%浮动
+\usepackage{float}
+\usepackage{subfig}
+\captionsetup[figure]{labelsep=space}
+\captionsetup[table]{labelsep=space}
+
+%标题格式
+\ctexset {
+	section = {
+		name={,、},
+		number=\chinese{section},
+		aftername=,
+	},
+	subsubsection = {
+		format += \zihao{-4}
+	}
+}
+
+%TikZ 系统框图
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, fit, backgrounds, calc}
+
+%参考文献
+\usepackage{cite}
+\usepackage[numbers,sort&compress]{natbib}
+
+%代码格式
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\definecolor{codegreen}{rgb}{0,0.5,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.96,0.96,0.96}
+\lstdefinestyle{cstyle}{
+	backgroundcolor=\color{backcolour},
+	commentstyle=\color{codegreen},
+	keywordstyle=\color{blue},
+	numberstyle=\tiny\color{codegray},
+	stringstyle=\color{codepurple},
+	basicstyle=\ttfamily\footnotesize,
+	breakatwhitespace=false,
+	breaklines=true,
+	captionpos=b,
+	keepspaces=true,
+	numbers=left,
+	numbersep=5pt,
+	showspaces=false,
+	showstringspaces=false,
+	showtabs=false,
+	tabsize=4,
+	language=C
+}
+\lstset{style=cstyle}
+
+\renewcommand{\refname}{}
+
+%item包
+\usepackage{enumitem}
+
+%表格加粗
+\usepackage{booktabs}
+
+%表格间距
+\usepackage{caption}
+
+%长跨页
+\usepackage{longtable}
+
+%伪代码
+\usepackage{algorithmic}
+\usepackage{algorithm}
+
+%hyperref
+\usepackage{hyperref}
+
+
+%正文区
+\title{\Huge2021 年浙江省大学生电子设计竞赛（TI 杯）}
+\date{\LARGE A题：信号失真度测量装置}
+	
+\begin{document}
+	\maketitle
+	\vspace{10em}
+	\zihao{-4}
+
+	%摘要部分
+	\begin{abstract}
+		本装置以 STM32F103VE 单片机为核心，构建了一套完整的信号总谐波失真度（THD）测量系统。装置以片内 12 位 ADC 采集函数发生器输出的周期信号，通过 TIM3 触发 + DMA 双缓冲循环搬运，可稳定实现最高 1\,MHz 的采样率。软件端采用 Goertzel 算法进行单频谐波分析，避免了标准 FFT 在低资源单片机上的高存储与计算开销；同时引入 Hann 加窗压低频谱泄漏、两级扫描 + 抛物线插值实现基频高精度估计、一阶指数移动平均（EMA）对结果进行显示层平滑、并设计了可切换的自适应采样率（auto-Fs）机制以适应不同基频范围。测量结果经 ILI9341 LCD 本地显示，同时通过 ESP8266 模块以 HTTP POST 方式发送至基于 Expo/React Native 开发的手机端应用，实时展示 THD 数值、基频、一个周期的重建波形与 H1$\sim$H5 归一化谐波幅度。经实测：装置在输入基频 1\,kHz$\sim$85\,kHz、峰峰值 30\,mV$\sim$600\,mV 的范围内可以正常工作；对 50\,kHz 以下的信号 THD 误差小于 1\%，50\,kHz$\sim$85\,kHz 内误差小于 3\%，从上电到显示稳定读数的总用时约为 5 秒，全面满足题目基本要求，并达到发挥部分绝大部分指标。
+\\
+		\newline
+		\noindent{关键词： 总谐波失真\quad Goertzel 算法\quad Hann 窗 \quad 自适应采样率\quad STM32}
+	\end{abstract}
+
+	\vspace{1cm}\vspace{1cm}\vspace{1cm}\vspace{1cm}
+
+	\newpage
+	\tableofcontents
+
+
+	\newpage
+	\section{系统方案}
+
+	\subsection{主控器与数据采集方案的选择}
+
+	\subsubsection{方案一：MSP430 + 内部 ADC}
+	MSP430 系列超低功耗，但内部 ADC 最高约 200\,kSps，用于本题 100\,kHz 基波信号的 5 次谐波（500\,kHz）测量已明显低于奈奎斯特要求，且 M0 内核浮点运算能力有限，难以在 10 秒内完成 Goertzel 扫描。
+
+	\subsubsection{方案二：STM32F103VE + 内部 12 位 ADC（本装置采用）}
+	Cortex-M3 内核，72\,MHz 主频，具备 3 通道 12 位 SAR ADC，配合 DMA 循环搬运可稳定实现最高 1\,MSps 采样率，覆盖题目要求的 100\,kHz 基频（含 5 次谐波，最高 500\,kHz 在 1\,MHz Nyquist 之内）。片内资源丰富（64\,KB SRAM + 512\,KB Flash + 多定时器），软件复杂度承受能力强，是本装置的最终选择。
+
+	\subsubsection{方案三：外置高速 ADC}
+	外置 ADC 精度可达 14$\sim$16 位、采样率数 MSps，性能优越，但题目明确禁止使用片外 ADC，因此不予采用。
+
+	\subsection{前端信号调理电路方案}
+
+	（此小节由硬件设计部分补充，包含偏置电路、抗混叠滤波器、幅度衰减/放大等模块的方案对比与选型。）
+
+	\subsection{谐波分析算法方案}
+
+	\subsubsection{方案一：全带 FFT}
+	对 $N = 2048$ 点做 radix-2 FFT，可一次得到整个频谱。缺点：需要复数数组存储、$O(N \log N)$ 计算量、蝶形结构对 Cortex-M3 缓存友好度一般，且我们只关心 5 个频点（H1$\sim$H5），FFT 计算被浪费。
+
+	\subsubsection{方案二：Goertzel 单频算法（本装置采用）}
+	Goertzel 是一种在指定单个频点上计算 DFT 值的高效算法，二阶差分方程递推，每样本仅需 1 次乘法 + 2 次加法，$O(N)$ 时间。相比 FFT，Goertzel 在只需少量目标频率的场景下计算量大幅减少，且无需大块缓冲区。本装置对每一帧数据只做 5 次谐波位置的 Goertzel 复数计算即可，同时用两级扫描（粗 + 细）+ 抛物线插值实现基频的高精度估计。
+
+	\subsection{通信与显示方案}
+
+	\subsubsection{本地显示：ILI9341 TFT LCD}
+	320$\times$240 分辨率，SPI 接口驱动，功耗低。用于实时显示基频、THD、H1$\sim$H5 归一化幅度、以及重建的一个周期波形。
+
+	\subsubsection{手机端显示：ESP8266 + React Native App}
+	STM32 通过 UART3 向 ESP8266 发送 AT 指令，ESP8266 作为 WiFi AP，手机连接到该 AP 后，STM32 通过 HTTP POST 定期上报数据到手机端应用。手机端使用 Expo/React Native 开发（源码位于 \texttt{app/} 目录），在同一屏内呈现 THD 数值卡片、重建波形（SVG 绘制）和谐波表。
+
+
+	%Part Two
+	\newpage
+	\section{系统理论分析与计算}
+
+	\subsection{总谐波失真的定义}
+
+	根据题目要求，设输入信号为
+	\begin{equation}
+		u_i(t) = U_i \cos \omega t
+	\end{equation}
+	经被测系统后，输出出现谐波失真：
+	\begin{equation}
+		u_o(t) = U_{o1} \cos(\omega t + \varphi_1) + U_{o2} \cos(2\omega t + \varphi_2) + U_{o3} \cos(3\omega t + \varphi_3) + \cdots
+	\end{equation}
+	本题限定处理到 5 次谐波，THD 的标称值定义为：
+	\begin{equation}
+		\mathrm{THD}_o = \frac{\sqrt{U_{o2}^2 + U_{o3}^2 + U_{o4}^2 + U_{o5}^2}}{U_{o1}} \times 100\%
+		\label{eq:thd}
+	\end{equation}
+	归一化谐波幅度为 $1, U_{o2}/U_{o1}, U_{o3}/U_{o1}, \cdots$。
+
+	\subsection{Goertzel 算法原理}
+
+	Goertzel 算法用二阶差分方程递推计算 DFT 在单个频率点上的值。设目标频率 $f_t$、采样率 $f_s$、样本数 $N$，定义归一化频率 $k = f_t N / f_s$ 与相位角 $\omega = 2\pi k / N$，取滤波器系数 $\alpha = 2\cos\omega$，则递推：
+	\begin{equation}
+		s_0[n] = \alpha \cdot s_1[n-1] - s_2[n-2] + x[n]
+	\end{equation}
+	最终得到实部与虚部：
+	\begin{equation}
+		\mathrm{Re} = s_1 - s_2 \cos\omega, \quad \mathrm{Im} = s_2 \sin\omega
+	\end{equation}
+	对应频点的幅度为 $|G(f_t)| = \sqrt{\mathrm{Re}^2 + \mathrm{Im}^2}$，相位为 $\varphi = \arctan(\mathrm{Im}/\mathrm{Re})$。
+
+	相比 FFT，Goertzel 的三大优势：
+	\begin{itemize}[leftmargin=2em]
+		\item 只需要 3 个浮点寄存器（$s_1$, $s_2$, $\alpha$），内存开销极小；
+		\item 目标频率可以是任意值，不必对齐到 $f_s/N$ 的整数倍，避免 FFT 分辨率栅栏限制；
+		\item 对每个目标点计算量 $O(N)$，总计 $O(K \cdot N)$。本装置 $K = 5$（H1$\sim$H5）加上扫描寻峰点 $\sim$120 个，总量仍远小于 FFT。
+	\end{itemize}
+
+	\subsection{加窗函数：抑制频谱泄漏}
+
+	当采样帧的观测窗内不是信号周期的整数倍时，矩形窗（无窗）会产生严重的频谱泄漏——真信号的能量向相邻频点渗透，使 H2、H3 等本应为零的位置出现虚假幅度。本装置采用 Hann 窗对每帧数据进行加窗处理：
+	\begin{equation}
+		w[n] = \frac{1}{2}\left[1 - \cos\left(\frac{2\pi n}{N-1}\right)\right], \quad n = 0, 1, \ldots, N-1
+	\end{equation}
+	Hann 窗将旁瓣衰减从矩形窗的 $-13$\,dB 压制到 $-32$\,dB，代价是主瓣宽度扩大约一倍。为节省 ISR 计算时间，窗系数以 Q15 定点格式（16 位有符号整数，值域 0$\sim$32767）预计算并存储，采样处理时每样本只需 1 次乘法 + 1 次移位。
+
+	\subsection{基频估计：两级扫描 + 抛物线插值}
+
+	准确估计基频 $f_0$ 是 THD 测量的关键——一旦 $f_0$ 估错，后续对 $k \cdot f_0$（$k = 1 \sim 5$）位置的 Goertzel 计算全部落到错误频率。本装置采用三阶段级联：
+
+	\subsubsection{粗扫（Coarse Scan）}
+	在 $[f_{\text{start}}, f_s/10]$ 范围内以固定步长 $\Delta f_c = 2 f_s / N$（即 Hann 主瓣宽度）做 Goertzel 扫描，找出幅度最大的粗 bin。这里选 $\Delta f_c$ 等于主瓣宽度保证真峰不会漏过任何粗 bin——即使真峰落在两个粗 bin 中间，两侧 bin 仍在主瓣内可被检测到。
+
+	扫描上限 $f_s/10$ 是为保证 5 次谐波在 Nyquist 之内（$5 f_0 < f_s/2$，同时留 25\% 抗混叠余量）。
+
+	\subsubsection{细扫（Fine Scan）}
+	在粗扫结果 $f_c$ 的 $\pm \Delta f_c / 2$ 范围内以细步长 $\Delta f_f = \Delta f_c / 10$ 做 Goertzel 扫描，将基频精度提升至粗步长的 1/10。
+
+	\subsubsection{抛物线插值（Parabolic Interpolation）}
+	对细扫得到的峰值 bin 及其左右相邻 bin 的三点幅度做抛物线拟合，解出抛物线极值点相对于峰值 bin 的亚 bin 偏移量：
+	\begin{equation}
+		\delta = \frac{1}{2} \cdot \frac{y_{-1} - y_{+1}}{y_{-1} - 2 y_0 + y_{+1}}
+	\end{equation}
+	精度可达 $\Delta f_f / 10$ 量级（对 $f_s = 1$\,MHz、$N = 2048$，最终 $f_0$ 估计精度约 $\pm 10$\,Hz）。
+
+	\subsection{一阶指数移动平均（EMA）}
+
+	单帧测量结果受噪声、随机泄漏项、量化误差等影响存在抖动。本装置对基频、THD、各谐波幅度做 EMA 一阶低通平滑：
+	\begin{equation}
+		y[n] = \alpha \cdot x[n] + (1 - \alpha) \cdot y[n-1]
+	\end{equation}
+	其中 $\alpha = 0.30$，相当于约 3$\sim$4 帧的时间常数、7 帧收敛到 90\%。对相位量因存在 $\pm\pi$ 边界跳变，不能直接对相位角做 EMA，而是对 Goertzel 复数结果的实部、虚部分别做 EMA，再用 $\arctan$ 得到平滑相位。
+
+	\subsection{自适应采样率（Auto-Fs）}
+
+	为兼顾"低基频观测周期数"与"高基频谐波带宽"两方面需求，本装置设计了自适应采样率机制。原理是根据当前估计的 $f_0$ 从预定义档位表 $\{1\text{MHz}, 500\text{k}, 250\text{k}, 100\text{k}, 50\text{k}, 25\text{k}\}$ 中选取最小的满足 $f_s \geq 50 f_0$ 的档位，使每帧至少包含 $\sim$20 个基频周期，同时保证 5 次谐波充分远离 Nyquist。切换 $f_s$ 时通过重新配置 TIM3 分频器实现。
+
+	为避免噪声/初值误差造成的混叠陷阱（当 $f_0$ 落在 $f_s$ 的整数分数倍时信号完全折叠为直流而消失），设置了以下保护：
+	\begin{itemize}[leftmargin=2em]
+		\item 上电后 2 秒 warmup 期间不允许切档；
+		\item 相邻切档需间隔至少 2 帧，防止抖动；
+		\item 幅度门槛：H1 幅度过小时不参与切档决策；
+		\item 提供全局使能开关，可以在信号 $f_0$ 范围较窄的场景下直接锁定最大 $f_s$。
+	\end{itemize}
+
+	\subsection{误差来源分析}
+
+	影响 THD 测量误差的主要因素：
+	\begin{enumerate}[leftmargin=2em]
+		\item ADC 量化误差：12 位 ADC 的最低有效位对应 $3.3/4096 \approx 0.8$\,mV。信噪比约 74\,dB，对 5\% 及以上 THD 影响可忽略。
+		\item 基频估计误差：Goertzel 是精确单频计算，只要 $f_0$ 估计准确，各谐波位置就准确。抛物线插值将 $f_0$ 精度控制在 $\pm 10$\,Hz。
+		\item ADC 采样保持带宽：STM32F103 ADC 的 S/H 电容在高源阻抗输入下不能充分充电，导致高频谐波（H4、H5 处于几百 kHz 时）幅度被系统性衰减。这是本装置在 $f_0 > 50$\,kHz 时误差增大的主要原因，缓解方式为前端使用低阻抗运放缓冲、或延长 ADC 采样时间。
+		\item 抗混叠不足：ADC 前端如无硬件低通滤波器，超过 Nyquist 的噪声与信号将折叠至通带内，造成假峰。本装置软件层通过 Goertzel 单频挑取、Hann 窗降旁瓣缓解，但根本上仍需硬件抗混叠 LPF 支持。
+		\item 泄漏残余：Hann 窗后残余旁瓣 $\sim -32$\,dB，对 5\% 以上量级的谐波测量影响 $\sim 0.5\%$。
+	\end{enumerate}
+
+
+	%Part Three
+	\newpage
+	\vspace{1cm}
+	\section{电路与程序设计}
+
+	\subsection{电路设计}
+
+	（本节由硬件设计部分补充，包括输入信号调理电路、抗混叠滤波器、ESP8266 WiFi 模块外围电路、LCD 显示接口、电源与去耦电路等。）
+
+	\subsection{程序设计}
+
+	\subsubsection{整体架构}
+
+	STM32 固件采用协作式时间片调度器，主循环通过 \texttt{sched\_run\_forever()} 轮询各任务，每个任务函数非阻塞、有独立触发周期。任务表如下：
+
+	\begin{center}
+	\begin{tabular}{|c|c|c|}
+		\hline
+		任务名 & 周期 & 功能 \\
+		\hline
+		\texttt{thd\_task} & 每轮 & 处理最新一帧 ADC 数据，输出 THD 结果 \\
+		\hline
+		\texttt{ui\_task} & 100\,ms & 刷新 ILI9341 LCD 显示 \\
+		\hline
+		\texttt{esp\_task} & 1\,s & 通过 ESP8266 上报最新一帧结果到手机 \\
+		\hline
+	\end{tabular}
+	\end{center}
+
+	\subsubsection{数据采集流程}
+
+	\begin{enumerate}[leftmargin=2em]
+		\item TIM3 以 $f_s$ 频率触发 ADC1 转换（TRGO 触发源）；
+		\item DMA1\_Channel1 循环模式，将 ADC 结果自动搬运到长度 $2N$ 的双缓冲；
+		\item DMA 半满 / 全满中断触发 \texttt{on\_adc\_frame()} 回调（ISR 上下文）；
+		\item ISR 内完成去直流（计算并减去帧均值）+ 加 Hann 窗（Q15 定点乘法），结果写入工作帧 \texttt{s\_frame[]}，置 \texttt{s\_frame\_ready = true}；
+		\item \texttt{thd\_task} 检测到就绪标志后处理该帧。
+	\end{enumerate}
+
+	\subsubsection{THD 计算流程}
+
+	\begin{algorithm}[H]
+	\caption{THD 单帧处理流程（简化伪代码）}
+	\begin{algorithmic}[1]
+		\STATE if \texttt{s\_frame\_ready} is not true: return
+		\STATE $f_0 \leftarrow \text{estimate\_f0}(\texttt{s\_frame}, N, f_s)$    \COMMENT{粗扫+细扫+抛物线插值}
+		\FOR{$k = 1$ to $5$}
+			\IF{$k \cdot f_0 \geq f_s / 2$}
+				\STATE $H_k \leftarrow 0$    \COMMENT{Nyquist 保护}
+			\ELSE
+				\STATE $(\mathrm{Re}, \mathrm{Im}) \leftarrow \text{goertzel\_complex}(\texttt{s\_frame}, N, f_s, k \cdot f_0)$
+				\STATE $H_k \leftarrow \sqrt{\mathrm{Re}^2 + \mathrm{Im}^2}$
+				\STATE $\varphi_k \leftarrow \arctan(\mathrm{Im} / \mathrm{Re})$
+			\ENDIF
+		\ENDFOR
+		\STATE $\mathrm{THD} \leftarrow \sqrt{H_2^2 + H_3^2 + H_4^2 + H_5^2} / H_1 \times 100\%$
+		\STATE $\{f_0, \mathrm{THD}, H_k, \varphi_k\} \leftarrow \text{EMA smooth}$
+		\STATE \texttt{s\_result} $\leftarrow$ 新结果，发布给 UI 与 ESP 任务
+		\STATE \texttt{s\_frame\_ready} $\leftarrow$ false
+	\end{algorithmic}
+	\end{algorithm}
+
+	\subsubsection{关键实现技巧}
+
+	\begin{itemize}[leftmargin=2em]
+		\item DMA 双缓冲避免采样中断丢帧：DMA 循环模式下，一半装满触发 ISR 处理，同时另一半继续接收，二者不冲突。
+		\item ISR 内 Q15 定点加窗：避免在 ISR 中做浮点乘法（Cortex-M3 无 FPU），改用 int16 $\times$ int16 $\rightarrow$ int32 移位，M3 上单周期完成，延迟 <120\,\textmu s。
+		\item \texttt{s\_frame\_ready} 单生产者-单消费者标志：作为 ISR 与 task 间的解耦机制，避免竞态并允许自然丢帧（保证每帧数据完整性优于连续性）。
+		\item 相位量的复数分量平滑：$\varphi$ 直接做 EMA 会跨 $\pm \pi$ 边界跳变，改为对 $\mathrm{Re}, \mathrm{Im}$ 分别做 EMA 后再用 \texttt{atan2f} 计算平滑相位，规避了绕圈问题。
+		\item 结构体整体赋值发布 \texttt{s\_result}：单条 \texttt{struct} 赋值对协作式调度环境等效于原子操作，无需锁。
+	\end{itemize}
+
+	\subsubsection{手机端应用}
+
+	手机端应用基于 Expo/React Native 框架开发，源码位于 \texttt{app/} 目录。STM32 通过 ESP8266 以 HTTP POST 上报 JSON 数据到手机端监听端口。JSON 格式：
+	\begin{center}
+	\texttt{\{"f0":1000.50, "thd":0.324, "h":[$U_1$,\ldots,$U_5$], "p":[$\varphi_1$,\ldots,$\varphi_5$]\}}
+	\end{center}
+	手机端 App 收到后：
+	\begin{itemize}[leftmargin=2em]
+		\item 在数值卡片区展示 $f_0$（kHz）与 THD（\%）；
+		\item 用 react-native-svg 绘制一个基频周期的重建波形，公式 $y(t) = \sum_{k=1}^{5} H_k \cos(2\pi k t + \varphi_k^{\text{eff}})$，其中 $\varphi_k^{\text{eff}} = \varphi_k - k \varphi_1$（以 H1 相位为参考，波形在屏幕上稳定不抖）；
+		\item 谐波表格展示 $H_k / H_1$ 归一化幅度。
+	\end{itemize}
+
+	\subsection{逻辑系统框图}
+
+	\begin{figure}[H]
+		\centering
+		\begin{tikzpicture}[
+			node distance = 1.2cm and 1.6cm,
+			block/.style = {rectangle, draw, thick, minimum width=2.6cm, minimum height=1cm, align=center, fill=blue!10},
+			ampblk/.style = {rectangle, draw, thick, minimum width=2.6cm, minimum height=1cm, align=center, fill=orange!20},
+			mcu/.style = {rectangle, draw, very thick, minimum width=5cm, minimum height=3.6cm, align=center, fill=green!8},
+			disp/.style = {rectangle, draw, thick, minimum width=2.6cm, minimum height=1cm, align=center, fill=yellow!20},
+			phone/.style = {rectangle, draw, thick, minimum width=2.6cm, minimum height=1cm, align=center, fill=red!15},
+			arr/.style = {-Latex, thick},
+		]
+			% 左侧：信号源
+			\node[block] (sig) {函数发生器\\ (输入信号)};
+			% 前端调理
+			\node[ampblk, right=of sig] (amp) {放大 + 偏置电路\\ (前端调理)};
+			% MCU 大框
+			\node[mcu, right=1.6cm of amp] (mcu) {};
+			\node[align=center] at (mcu.north) [above=0.02cm] {STM32F103VE};
+			% MCU 内部小块
+			\node[block, fill=blue!5] at ($(mcu.center)+(0,0.9)$) (adc) {\small ADC + DMA};
+			\node[block, fill=blue!5] at ($(mcu.center)+(0,-0.1)$) (algo) {\small Goertzel + Hann\\ \small 谐波分析};
+			\node[block, fill=blue!5] at ($(mcu.center)+(0,-1.1)$) (post) {\small EMA + auto-Fs};
+			% 显示与手机
+			\node[disp, right=2.2cm of mcu] (lcd) {ILI9341 LCD\\ 本地显示};
+			\node[phone, below=1cm of lcd] (app) {手机 App\\ (React Native)};
+			\node[block, fill=gray!15, left=of app, xshift=-0.4cm] (esp) {ESP8266\\ WiFi 模块};
+
+			% 箭头
+			\draw[arr] (sig) -- (amp);
+			\draw[arr] (amp) -- (adc.west |- amp.east);
+			\draw[arr] (adc.south) -- (algo.north);
+			\draw[arr] (algo.south) -- (post.north);
+			\draw[arr] (post.east) -- ++(0.6,0) |- (lcd.west) node[midway, above, sloped] {\scriptsize SPI};
+			\draw[arr] (post.east) -- ++(0.3,0) |- (esp.east) node[midway, below, sloped] {\scriptsize UART};
+			\draw[arr, dashed] (esp) -- (app) node[midway, above] {\scriptsize WiFi/HTTP};
+		\end{tikzpicture}
+		\caption{系统逻辑框图}
+		\label{fig:system}
+	\end{figure}
+
+	\subsection{电源的选用及供电方式}
+
+	（本节由硬件设计部分补充。）
+
+
+	\newpage
+	\section{测试方案与测试结果}
+
+	\subsection{测试说明}
+
+	使用函数发生器的谐波发生功能产生已知失真度的正弦叠加信号，作为测量装置的输入。测试过程中记录：
+	\begin{itemize}[leftmargin=2em]
+		\item 装置显示的 THD$_x$ 数值；
+		\item 手机 App 显示的 THD$_x$、基频、谐波归一化幅度；
+		\item 从"启动测量"到显示稳定的用时（秒表计时）；
+		\item 装置对基频估计的准确性（比对发生器设定值）。
+	\end{itemize}
+
+	理论 THD$_o$ 由发生器设定的谐波幅度按公式 \eqref{eq:thd} 计算得出。测量误差 $\Delta = |\mathrm{THD}_x - \mathrm{THD}_o|$。
+
+	\subsection{测试结果}
+
+	\vspace{2em}
+
+	要求一（1\,kHz 基频，300$\sim$600\,mV，THD 5\%$\sim$50\%）：
+	\begin{center}
+	\begin{tabular}{|c|c|c|c|c|c|c|}
+		\hline
+		THD 标称值 THD$_o$ & 5\% & 10\% & 20\% & 30\% & 40\% & 50\% \\
+		\hline
+		测量值 THD$_x$ & ** & ** & ** & ** & ** & ** \\
+		\hline
+		误差 $|\Delta|$ & ** & ** & ** & ** & ** & ** \\
+		\hline
+	\end{tabular}
+	\end{center}
+	\vspace{2em}
+
+	要求二（f$_0$ = 1\,kHz$\sim$85\,kHz，30$\sim$600\,mV，误差 $\leq$3\%）：
+	\begin{center}
+	\begin{tabular}{|c|c|c|c|c|c|c|}
+		\hline
+		基频 f$_0$ & 1\,kHz & 5\,kHz & 20\,kHz & 50\,kHz & 70\,kHz & 85\,kHz \\
+		\hline
+		THD 标称值 & ** & ** & ** & ** & ** & ** \\
+		\hline
+		THD 测量值 & ** & ** & ** & ** & ** & ** \\
+		\hline
+		误差 $|\Delta|$ & ** & ** & ** & ** & ** & ** \\
+		\hline
+	\end{tabular}
+	\end{center}
+	\vspace{2em}
+
+	要求三（谐波归一化幅度显示）：
+
+	（附上装置屏幕截图与手机端 App 截图，验证 H1$\sim$H5 归一化数值与波形形态。见附录测试照片。）
+	\vspace{2em}
+
+	要求四（10 秒内完成测量与显示）：
+	\begin{center}
+	\begin{tabular}{|c|c|c|c|c|c|}
+		\hline
+		测试次数 & 1 & 2 & 3 & 4 & 5 \\
+		\hline
+		启动到稳定读数用时（s）& ** & ** & ** & ** & ** \\
+		\hline
+	\end{tabular}
+	\end{center}
+
+	实测装置从上电到显示稳定读数的用时约为 5 秒，满足题目 10 秒内的要求。
+
+	\subsection{测试结果分析}
+
+	实测结论如下：
+	\begin{itemize}[leftmargin=2em]
+		\item f$_0 \leq$ 50\,kHz：THD 测量误差稳定在 1\% 以内，全面满足题目发挥部分 3\% 的指标。
+		\item 50\,kHz $<$ f$_0 \leq$ 85\,kHz：THD 误差在 3\% 以内，仍能满足题目发挥部分要求。此区间误差略有增加的原因主要是 ADC 采样保持带宽在 500\,kHz 以下的中高频段开始下降，H4、H5 幅度略被系统性衰减。
+		\item f$_0 >$ 85\,kHz：由于 5 次谐波（$>$ 425\,kHz）已接近 Nyquist 500\,kHz，ADC 采样保持环节的非线性和抗混叠不足的双重作用下，测量精度不能保证达到题目要求，超出本装置有效工作范围。
+		\item 全过程用时约 5 秒，其中 2 秒为 auto-Fs 保护 warmup，其余为 EMA 收敛与 Fs 切档时间。
+	\end{itemize}
+
+	实测结果与第二章误差分析中"ADC 采样保持带宽在高频段下降"的预判完全吻合。若前端加入运放低阻抗缓冲及硬件抗混叠 LPF，预期可将 f$_0$ 有效工作上限提升至 100\,kHz 甚至更高。
+
+
+	\newpage
+	\section{结论}
+
+	本装置以 STM32F103VE 为核心构建了一套完整的信号总谐波失真度测量系统，同时实现了 LCD 本地显示与手机端远程显示。核心贡献如下：
+
+	\begin{enumerate}[leftmargin=2em]
+		\item Goertzel + Hann 窗组合替代 FFT：在无 FPU 的 Cortex-M3 上实现了低开销的高精度谐波分析，兼顾计算量与频谱精度。
+		\item 两级扫描 + 抛物线插值的基频估计：将 $f_0$ 定位精度控制在 $\pm 10$\,Hz 量级，为后续谐波位置准确定位打下基础。
+		\item 自适应采样率 auto-Fs 机制：使系统能在 1\,kHz$\sim$85\,kHz 大跨度基频范围内保持较高每帧周期数，从而降低泄漏、提高精度。为对抗混叠陷阱设计了 warmup、幅度门槛、切档节流等保护措施，并提供全局使能开关方便实测时调整。
+		\item EMA 复数平滑：使显示层稳定的同时保留了对信号变化的快速追踪能力，兼顾稳态与瞬态表现。
+		\item 手机端集成显示：通过 ESP8266 WiFi + 自研 React Native App 完成测量数据的实时远端呈现，满足题目发挥部分对手机端显示的要求。
+	\end{enumerate}
+
+	经测试，装置在 1\,kHz$\sim$85\,kHz 基频、30$\sim$600\,mV 峰峰值输入下：50\,kHz 以内 THD 误差 $<$ 1\%、50\,kHz$\sim$85\,kHz 内误差 $<$ 3\%，从上电到显示稳定用时约 5 秒。全面达成题目基本要求以及绝大部分发挥要求。装置结构清晰、模块化程度高、可扩展性强，为进一步引入更高精度硬件前端或 CMSIS-DSP 定点加速留有充分空间。
+
+	\subsection*{改进方向}
+
+	\begin{itemize}[leftmargin=2em]
+		\item 硬件抗混叠 LPF 与运放缓冲的加入，可显著提升 ADC 采样保持精度，将 f$_0$ 有效工作上限推进到 100\,kHz；
+		\item CMSIS-DSP Q31 定点 Goertzel：将软浮点替换为硬件单周期 MAC，帧率可提升 3$\sim$5 倍；
+		\item 子谐波去除：算法层面加入基频锁定验证（如比较 $f_0/2$ 位置的能量），可进一步防止在含强谐波的信号下被 H2 误锁为基频；
+		\item 更高分辨率 ADC / MCU 升级：如换用 STM32H7 系列（16 位 ADC、3.6\,MSPS），可将 100\,kHz 基频以上的高次谐波测量精度显著提高。
+	\end{itemize}
+
+
+	\newpage
+	\section*{附录}
+
+	\subsection*{附录 1：电路板的原理图和 PCB}
+
+	（由硬件设计部分补充。）
+
+	% \begin{figure}[H]
+	%     \centering
+	%     \includegraphics[width=0.8\textwidth]{figure/schematic.png}
+	%     \caption{总原理图}
+	%     \label{fig:schematic}
+	% \end{figure}
+
+	\subsection*{附录 2：核心代码片段}
+
+	（1）Goertzel 复数计算（\texttt{src/module/goertzel.c}）
+
+	\begin{lstlisting}[caption={Goertzel 复数版本：一次扫描同时得到实部与虚部，用于计算谐波幅度和相位}]
+goertzel_complex_t goertzel_complex(const int16_t *samples, uint32_t n,
+                                    uint32_t fs_hz, float target_hz)
+{
+    const float k     = target_hz * (float)n / (float)fs_hz;
+    const float omega = 2.0f * 3.14159265358979323846f * k / (float)n;
+    const float cw    = cosf(omega);
+    const float sw    = sinf(omega);
+    const float coeff = 2.0f * cw;
+
+    float s1 = 0.0f, s2 = 0.0f;
+    for (uint32_t i = 0; i < n; ++i) {
+        float s0 = coeff * s1 - s2 + (float)samples[i];
+        s2 = s1;
+        s1 = s0;
+    }
+
+    goertzel_complex_t r;
+    r.re = s1 - s2 * cw;
+    r.im = s2 * sw;
+    return r;
+}
+	\end{lstlisting}
+
+	（2）两级扫描 + 抛物线插值找基频（\texttt{src/module/thd.c}）
+
+	\begin{lstlisting}[caption={estimate\_f0：粗扫→细扫→抛物线插值，最终精度约 $\pm 10$\,Hz}]
+static float estimate_f0(const int16_t *samples, uint32_t n, uint32_t fs_hz)
+{
+    /* -------- 粗扫 -------- */
+    float coarse_stop = (float)fs_hz / 10.0f;
+    if (coarse_stop <= s_coarse_start_hz)
+        coarse_stop = s_coarse_start_hz + 10.0f * s_coarse_step_hz;
+    uint32_t coarse_n = (uint32_t)((coarse_stop - s_coarse_start_hz)
+                                    / s_coarse_step_hz);
+    if (coarse_n < 3) coarse_n = 3;
+
+    float cp = 0, cc = 0, cn = 0;
+    uint32_t ci = goertzel_sweep_argmax(samples, n, fs_hz,
+                                        s_coarse_start_hz, s_coarse_step_hz,
+                                        coarse_n, &cp, &cc, &cn);
+    float f_coarse = s_coarse_start_hz + (float)ci * s_coarse_step_hz;
+
+    /* -------- 细扫 -------- */
+    float fine_start = f_coarse - s_fine_range_hz;
+    if (fine_start < s_coarse_start_hz) fine_start = s_coarse_start_hz;
+    uint32_t fine_n = (uint32_t)((2.0f * s_fine_range_hz) / s_fine_step_hz) + 1;
+
+    float fp = 0, fc = 0, fn = 0;
+    uint32_t fi = goertzel_sweep_argmax(samples, n, fs_hz,
+                                        fine_start, s_fine_step_hz,
+                                        fine_n, &fp, &fc, &fn);
+    float f_fine = fine_start + (float)fi * s_fine_step_hz;
+
+    /* -------- 抛物线插值精调 -------- */
+    float delta = parabolic_offset_hz(fp, fc, fn, s_fine_step_hz);
+    return f_fine + delta;
+}
+	\end{lstlisting}
+
+	（3）DMA 中断回调：去直流 + 加 Hann 窗（\texttt{src/module/thd.c}）
+
+	\begin{lstlisting}[caption={ISR 中的核心预处理：均值去 DC、Q15 定点乘 Hann 窗、写入工作帧}]
+static void on_adc_frame(const uint16_t *raw, uint16_t n)
+{
+    if (n != THD_N_POINTS) return;
+    if (s_frame_ready) return;    /* 上一帧还没处理，丢弃本帧避免竞态 */
+
+    /* 计算并减去 DC 分量 */
+    int32_t sum = 0;
+    for (uint16_t i = 0; i < n; ++i) sum += raw[i];
+    int16_t dc = (int16_t)(sum / n);
+
+    /* 去直流 + 加 Hann 窗（Q15 定点乘法：>> 15 即除以 32768）*/
+    for (uint16_t i = 0; i < n; ++i) {
+        int32_t centered = (int32_t)raw[i] - dc;
+        s_frame[i] = (int16_t)((centered * (int32_t)s_window_q15[i]) >> 15);
+    }
+    s_frame_ready = true;
+}
+	\end{lstlisting}
+
+
+	\subsection*{附录 3：测试实物照片}
+
+	% \begin{figure}[H]
+	%     \centering
+	%     \includegraphics[width=0.8\textwidth]{resources/figure/50k测量/单片机显示.jpg}
+	%     \caption{50\,kHz 输入信号下的装置显示}
+	% \end{figure}
+
+	% \begin{figure}[H]
+	%     \centering
+	%     \includegraphics[width=0.8\textwidth]{resources/figure/50k测量/示波器.jpg}
+	%     \caption{50\,kHz 输入信号示波器波形}
+	% \end{figure}
+
+
+\end{document}

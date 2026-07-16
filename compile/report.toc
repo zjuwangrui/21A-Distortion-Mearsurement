@@ -1,0 +1,38 @@
+\contentsline {section}{\numberline {一、}系统方案}{4}{section.1}%
+\contentsline {subsection}{\numberline {1.1}主控器与数据采集方案的选择}{4}{subsection.1.1}%
+\contentsline {subsubsection}{\numberline {1.1.1}方案一：MSP430 + 内部 ADC}{4}{subsubsection.1.1.1}%
+\contentsline {subsubsection}{\numberline {1.1.2}方案二：STM32F103VE + 内部 12 位 ADC（本装置采用）}{4}{subsubsection.1.1.2}%
+\contentsline {subsubsection}{\numberline {1.1.3}方案三：外置高速 ADC}{4}{subsubsection.1.1.3}%
+\contentsline {subsection}{\numberline {1.2}前端信号调理电路方案}{4}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}谐波分析算法方案}{4}{subsection.1.3}%
+\contentsline {subsubsection}{\numberline {1.3.1}方案一：全带 FFT}{4}{subsubsection.1.3.1}%
+\contentsline {subsubsection}{\numberline {1.3.2}方案二：Goertzel 单频算法（本装置采用）}{4}{subsubsection.1.3.2}%
+\contentsline {subsection}{\numberline {1.4}通信与显示方案}{5}{subsection.1.4}%
+\contentsline {subsubsection}{\numberline {1.4.1}本地显示：ILI9341 TFT LCD}{5}{subsubsection.1.4.1}%
+\contentsline {subsubsection}{\numberline {1.4.2}手机端显示：ESP8266 + React Native App}{5}{subsubsection.1.4.2}%
+\contentsline {section}{\numberline {二、}系统理论分析与计算}{6}{section.2}%
+\contentsline {subsection}{\numberline {2.1}总谐波失真的定义}{6}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Goertzel 算法原理}{6}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}加窗函数：抑制频谱泄漏}{6}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}基频估计：两级扫描 + 抛物线插值}{7}{subsection.2.4}%
+\contentsline {subsubsection}{\numberline {2.4.1}粗扫（Coarse Scan）}{7}{subsubsection.2.4.1}%
+\contentsline {subsubsection}{\numberline {2.4.2}细扫（Fine Scan）}{7}{subsubsection.2.4.2}%
+\contentsline {subsubsection}{\numberline {2.4.3}抛物线插值（Parabolic Interpolation）}{7}{subsubsection.2.4.3}%
+\contentsline {subsection}{\numberline {2.5}一阶指数移动平均（EMA）}{7}{subsection.2.5}%
+\contentsline {subsection}{\numberline {2.6}自适应采样率（Auto-Fs）}{8}{subsection.2.6}%
+\contentsline {subsection}{\numberline {2.7}误差来源分析}{8}{subsection.2.7}%
+\contentsline {section}{\numberline {三、}电路与程序设计}{9}{section.3}%
+\contentsline {subsection}{\numberline {3.1}电路设计}{9}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}程序设计}{9}{subsection.3.2}%
+\contentsline {subsubsection}{\numberline {3.2.1}整体架构}{9}{subsubsection.3.2.1}%
+\contentsline {subsubsection}{\numberline {3.2.2}数据采集流程}{9}{subsubsection.3.2.2}%
+\contentsline {subsubsection}{\numberline {3.2.3}THD 计算流程}{10}{subsubsection.3.2.3}%
+\contentsline {subsubsection}{\numberline {3.2.4}关键实现技巧}{10}{subsubsection.3.2.4}%
+\contentsline {subsubsection}{\numberline {3.2.5}手机端应用}{10}{subsubsection.3.2.5}%
+\contentsline {subsection}{\numberline {3.3}逻辑系统框图}{11}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}电源的选用及供电方式}{11}{subsection.3.4}%
+\contentsline {section}{\numberline {四、}测试方案与测试结果}{12}{section.4}%
+\contentsline {subsection}{\numberline {4.1}测试说明}{12}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}测试结果}{12}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}测试结果分析}{13}{subsection.4.3}%
+\contentsline {section}{\numberline {五、}结论}{14}{section.5}%

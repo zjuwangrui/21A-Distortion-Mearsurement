@@ -40,7 +40,7 @@
  * 用邻居的均值替换掉尖峰点。阈值自适应帧内平均变化。
  * 对偶发的窄尖峰（1~2 样本宽）有效；宽噪声、连续噪声无效。
  * 设 0 = 关闭；1 = 打开。*/
-#define THD_USE_SPIKE_FILTER    1
+#define THD_USE_SPIKE_FILTER    0
 #define THD_SPIKE_THRESHOLD_MUL 4    /* 阈值 = 4 × 帧内平均相邻差分绝对值 */
 
 /* Auto-Fs 使能：
