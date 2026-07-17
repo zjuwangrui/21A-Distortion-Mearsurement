@@ -107,7 +107,7 @@
 %正文区
 \title{\Huge2021 年浙江省大学生电子设计竞赛（TI 杯）}
 \date{\LARGE A题：信号失真度测量装置}
-	
+
 \begin{document}
 	\maketitle
 	\vspace{10em}
@@ -143,7 +143,9 @@
 
 	\subsection{前端信号调理电路方案}
 
-	（此小节由硬件设计部分补充，包含偏置电路、抗混叠滤波器、幅度衰减/放大等模块的方案对比与选型。）
+	输入信号幅度较小，考虑加入放大电路。此外由于输入信号是正负对称无偏置信号，而单片机只能接受0-3.3V的信号，所以需要加偏置电路。
+
+	考虑仪表放大器AD620，满足$Vo = A_v(V_+ - V_-) + V_{offset}$。选择AD620作为仪表放大器，同时利用电阻分压设计偏置电路，提供1.65V的偏置电压，保证交流信号幅度可以最大。
 
 	\subsection{谐波分析算法方案}
 
@@ -268,8 +270,13 @@
 
 	\subsection{电路设计}
 
-	（本节由硬件设计部分补充，包括输入信号调理电路、抗混叠滤波器、ESP8266 WiFi 模块外围电路、LCD 显示接口、电源与去耦电路等。）
-
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{resources/figure/circuit.png}
+	\caption{电路原理图}
+	\label{fig:circuit}
+\end{figure}
+电路原理图如上所示，仪表放大器对信号进行放大的同时加入偏置。
 	\subsection{程序设计}
 
 	\subsubsection{整体架构}
@@ -350,115 +357,77 @@
 
 	\begin{figure}[H]
 		\centering
-		\begin{tikzpicture}[
-			node distance = 1.2cm and 1.6cm,
-			block/.style = {rectangle, draw, thick, minimum width=2.6cm, minimum height=1cm, align=center, fill=blue!10},
-			ampblk/.style = {rectangle, draw, thick, minimum width=2.6cm, minimum height=1cm, align=center, fill=orange!20},
-			mcu/.style = {rectangle, draw, very thick, minimum width=5cm, minimum height=3.6cm, align=center, fill=green!8},
-			disp/.style = {rectangle, draw, thick, minimum width=2.6cm, minimum height=1cm, align=center, fill=yellow!20},
-			phone/.style = {rectangle, draw, thick, minimum width=2.6cm, minimum height=1cm, align=center, fill=red!15},
-			arr/.style = {-Latex, thick},
-		]
-			% 左侧：信号源
-			\node[block] (sig) {函数发生器\\ (输入信号)};
-			% 前端调理
-			\node[ampblk, right=of sig] (amp) {放大 + 偏置电路\\ (前端调理)};
-			% MCU 大框
-			\node[mcu, right=1.6cm of amp] (mcu) {};
-			\node[align=center] at (mcu.north) [above=0.02cm] {STM32F103VE};
-			% MCU 内部小块
-			\node[block, fill=blue!5] at ($(mcu.center)+(0,0.9)$) (adc) {\small ADC + DMA};
-			\node[block, fill=blue!5] at ($(mcu.center)+(0,-0.1)$) (algo) {\small Goertzel + Hann\\ \small 谐波分析};
-			\node[block, fill=blue!5] at ($(mcu.center)+(0,-1.1)$) (post) {\small EMA + auto-Fs};
-			% 显示与手机
-			\node[disp, right=2.2cm of mcu] (lcd) {ILI9341 LCD\\ 本地显示};
-			\node[phone, below=1cm of lcd] (app) {手机 App\\ (React Native)};
-			\node[block, fill=gray!15, left=of app, xshift=-0.4cm] (esp) {ESP8266\\ WiFi 模块};
-
-			% 箭头
-			\draw[arr] (sig) -- (amp);
-			\draw[arr] (amp) -- (adc.west |- amp.east);
-			\draw[arr] (adc.south) -- (algo.north);
-			\draw[arr] (algo.south) -- (post.north);
-			\draw[arr] (post.east) -- ++(0.6,0) |- (lcd.west) node[midway, above, sloped] {\scriptsize SPI};
-			\draw[arr] (post.east) -- ++(0.3,0) |- (esp.east) node[midway, below, sloped] {\scriptsize UART};
-			\draw[arr, dashed] (esp) -- (app) node[midway, above] {\scriptsize WiFi/HTTP};
-		\end{tikzpicture}
+		\includegraphics[width=0.9\textwidth]{resources/figure/system.png}
 		\caption{系统逻辑框图}
 		\label{fig:system}
 	\end{figure}
-
-	\subsection{电源的选用及供电方式}
-
-	（本节由硬件设计部分补充。）
-
 
 	\newpage
 	\section{测试方案与测试结果}
 
 	\subsection{测试说明}
 
-	使用函数发生器的谐波发生功能产生已知失真度的正弦叠加信号，作为测量装置的输入。测试过程中记录：
-	\begin{itemize}[leftmargin=2em]
-		\item 装置显示的 THD$_x$ 数值；
-		\item 手机 App 显示的 THD$_x$、基频、谐波归一化幅度；
-		\item 从"启动测量"到显示稳定的用时（秒表计时）；
-		\item 装置对基频估计的准确性（比对发生器设定值）。
-	\end{itemize}
-
+	使用函数发生器的谐波发生功能产生已知失真度的正弦叠加信号，作为测量装置的输入。
 	理论 THD$_o$ 由发生器设定的谐波幅度按公式 \eqref{eq:thd} 计算得出。测量误差 $\Delta = |\mathrm{THD}_x - \mathrm{THD}_o|$。
 
 	\subsection{测试结果}
 
 	\vspace{2em}
 
-	要求一（1\,kHz 基频，300$\sim$600\,mV，THD 5\%$\sim$50\%）：
-	\begin{center}
-	\begin{tabular}{|c|c|c|c|c|c|c|}
-		\hline
-		THD 标称值 THD$_o$ & 5\% & 10\% & 20\% & 30\% & 40\% & 50\% \\
-		\hline
-		测量值 THD$_x$ & ** & ** & ** & ** & ** & ** \\
-		\hline
-		误差 $|\Delta|$ & ** & ** & ** & ** & ** & ** \\
-		\hline
-	\end{tabular}
-	\end{center}
-	\vspace{2em}
+	第一组低频测试（1-50\,kHz 基频，30$\sim$600\,mV）：
+\begin{table}[H]
+\small
+\centering
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+\hline
+  频率 (KHz) & 峰峰值 (mV) & 二次谐波 & 三次谐波 & 四次谐波 & 五次谐波 & 失真度标称值 &失真度测量值 & 失真度差 \\
+\hline
+  1 & 400 & 0 & 80 & 0 & 60 & 25\% & 24.3\% & 0.7\% \\
+\hline
+  1 & 30 & 30*0.3 & 30*0.1 & 30*0.2 & 30*0.1 & 38.73\% & 38.4\% & 0.33\% \\
+  
+\hline
+10 & 300 & 300*0.3 & 300*0.1 & 300*0.2 & 300*0.1 & 38.73\% & 38.2\% & 0.53\% \\
+\hline
+30 & 450 & 0 & 450*0.2 & 450*0.133 & 450*0.1 & 26.01\% & 25.7\% & 0.31\% \\
+\hline
+\end{tabular}
+\end{table}
+	第二组高频测试（f$_0$ = 50-100\,kHz,30$\sim$600\,mV）：
+\begin{table}[H]
+\small
+\centering
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+\hline
+  频率 (KHz) & 峰峰值 (mV) & 二次谐波 & 三次谐波 & 四次谐波 & 五次谐波 & 失真度标称值 &失真度测量值 & 失真度差 \\
+\hline
+  50 & 200 & 0 & 0 & 30 & 16 & 17\% & 18.6\% & 1.6\% \\
+\hline
+60 & 450 & 450*0.3 & 450*0.1 & 450*0.2 & 450*0.1 & 38.73\% & 38.2\% & 0.53\% \\
+\hline
+85 & 40 & 0 & 0 & 0 & 4 & 10\% & 12.95\% & 2.95\% \\
+\hline
+  100 & 40 & 0 & 0 & 0 & 4 & 10\% & 49.9\% & 39.9\% \\
+\hline
+\end{tabular}
+\end{table}
 
-	要求二（f$_0$ = 1\,kHz$\sim$85\,kHz，30$\sim$600\,mV，误差 $\leq$3\%）：
-	\begin{center}
-	\begin{tabular}{|c|c|c|c|c|c|c|}
-		\hline
-		基频 f$_0$ & 1\,kHz & 5\,kHz & 20\,kHz & 50\,kHz & 70\,kHz & 85\,kHz \\
-		\hline
-		THD 标称值 & ** & ** & ** & ** & ** & ** \\
-		\hline
-		THD 测量值 & ** & ** & ** & ** & ** & ** \\
-		\hline
-		误差 $|\Delta|$ & ** & ** & ** & ** & ** & ** \\
-		\hline
-	\end{tabular}
-	\end{center}
-	\vspace{2em}
+	单片机和手机均可以实时显示失真度、谐波归一化幅度和波形图
+	\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{resources/figure/phone.jpg}
+	\caption{手机端显示界面}
+	\label{fig:phone}
+	\end{figure}
 
-	要求三（谐波归一化幅度显示）：
+	\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{resources/figure/50k测量/单片机显示.jpg}
+	\caption{单片机lcd显示界面}
+	\label{fig:lcd}
+	\end{figure}
 
-	（附上装置屏幕截图与手机端 App 截图，验证 H1$\sim$H5 归一化数值与波形形态。见附录测试照片。）
-	\vspace{2em}
-
-	要求四（10 秒内完成测量与显示）：
-	\begin{center}
-	\begin{tabular}{|c|c|c|c|c|c|}
-		\hline
-		测试次数 & 1 & 2 & 3 & 4 & 5 \\
-		\hline
-		启动到稳定读数用时（s）& ** & ** & ** & ** & ** \\
-		\hline
-	\end{tabular}
-	\end{center}
-
-	实测装置从上电到显示稳定读数的用时约为 5 秒，满足题目 10 秒内的要求。
+	实测装置从上电到显示稳定读数的用时约为 5 秒，满足题目 10 秒内的要求。当输入信号频率发生超过30kHz的变化时，计算时间会超过10s达到20s
 
 	\subsection{测试结果分析}
 
@@ -467,11 +436,8 @@
 		\item f$_0 \leq$ 50\,kHz：THD 测量误差稳定在 1\% 以内，全面满足题目发挥部分 3\% 的指标。
 		\item 50\,kHz $<$ f$_0 \leq$ 85\,kHz：THD 误差在 3\% 以内，仍能满足题目发挥部分要求。此区间误差略有增加的原因主要是 ADC 采样保持带宽在 500\,kHz 以下的中高频段开始下降，H4、H5 幅度略被系统性衰减。
 		\item f$_0 >$ 85\,kHz：由于 5 次谐波（$>$ 425\,kHz）已接近 Nyquist 500\,kHz，ADC 采样保持环节的非线性和抗混叠不足的双重作用下，测量精度不能保证达到题目要求，超出本装置有效工作范围。
-		\item 全过程用时约 5 秒，其中 2 秒为 auto-Fs 保护 warmup，其余为 EMA 收敛与 Fs 切档时间。
+		\item 全过程用时约 5 秒
 	\end{itemize}
-
-	实测结果与第二章误差分析中"ADC 采样保持带宽在高频段下降"的预判完全吻合。若前端加入运放低阻抗缓冲及硬件抗混叠 LPF，预期可将 f$_0$ 有效工作上限提升至 100\,kHz 甚至更高。
-
 
 	\newpage
 	\section{结论}
@@ -488,31 +454,12 @@
 
 	经测试，装置在 1\,kHz$\sim$85\,kHz 基频、30$\sim$600\,mV 峰峰值输入下：50\,kHz 以内 THD 误差 $<$ 1\%、50\,kHz$\sim$85\,kHz 内误差 $<$ 3\%，从上电到显示稳定用时约 5 秒。全面达成题目基本要求以及绝大部分发挥要求。装置结构清晰、模块化程度高、可扩展性强，为进一步引入更高精度硬件前端或 CMSIS-DSP 定点加速留有充分空间。
 
-	\subsection*{改进方向}
-
-	\begin{itemize}[leftmargin=2em]
-		\item 硬件抗混叠 LPF 与运放缓冲的加入，可显著提升 ADC 采样保持精度，将 f$_0$ 有效工作上限推进到 100\,kHz；
-		\item CMSIS-DSP Q31 定点 Goertzel：将软浮点替换为硬件单周期 MAC，帧率可提升 3$\sim$5 倍；
-		\item 子谐波去除：算法层面加入基频锁定验证（如比较 $f_0/2$ 位置的能量），可进一步防止在含强谐波的信号下被 H2 误锁为基频；
-		\item 更高分辨率 ADC / MCU 升级：如换用 STM32H7 系列（16 位 ADC、3.6\,MSPS），可将 100\,kHz 基频以上的高次谐波测量精度显著提高。
-	\end{itemize}
 
 
 	\newpage
 	\section*{附录}
 
-	\subsection*{附录 1：电路板的原理图和 PCB}
-
-	（由硬件设计部分补充。）
-
-	% \begin{figure}[H]
-	%     \centering
-	%     \includegraphics[width=0.8\textwidth]{figure/schematic.png}
-	%     \caption{总原理图}
-	%     \label{fig:schematic}
-	% \end{figure}
-
-	\subsection*{附录 2：核心代码片段}
+	\subsection*{附录 1：核心代码片段}
 
 	（1）Goertzel 复数计算（\texttt{src/module/goertzel.c}）
 
@@ -597,21 +544,5 @@ static void on_adc_frame(const uint16_t *raw, uint16_t n)
     s_frame_ready = true;
 }
 	\end{lstlisting}
-
-
-	\subsection*{附录 3：测试实物照片}
-
-	% \begin{figure}[H]
-	%     \centering
-	%     \includegraphics[width=0.8\textwidth]{resources/figure/50k测量/单片机显示.jpg}
-	%     \caption{50\,kHz 输入信号下的装置显示}
-	% \end{figure}
-
-	% \begin{figure}[H]
-	%     \centering
-	%     \includegraphics[width=0.8\textwidth]{resources/figure/50k测量/示波器.jpg}
-	%     \caption{50\,kHz 输入信号示波器波形}
-	% \end{figure}
-
 
 \end{document}

@@ -28,11 +28,10 @@
 \contentsline {subsubsection}{\numberline {3.2.2}数据采集流程}{9}{subsubsection.3.2.2}%
 \contentsline {subsubsection}{\numberline {3.2.3}THD 计算流程}{10}{subsubsection.3.2.3}%
 \contentsline {subsubsection}{\numberline {3.2.4}关键实现技巧}{10}{subsubsection.3.2.4}%
-\contentsline {subsubsection}{\numberline {3.2.5}手机端应用}{10}{subsubsection.3.2.5}%
+\contentsline {subsubsection}{\numberline {3.2.5}手机端应用}{11}{subsubsection.3.2.5}%
 \contentsline {subsection}{\numberline {3.3}逻辑系统框图}{11}{subsection.3.3}%
-\contentsline {subsection}{\numberline {3.4}电源的选用及供电方式}{11}{subsection.3.4}%
 \contentsline {section}{\numberline {四、}测试方案与测试结果}{12}{section.4}%
 \contentsline {subsection}{\numberline {4.1}测试说明}{12}{subsection.4.1}%
 \contentsline {subsection}{\numberline {4.2}测试结果}{12}{subsection.4.2}%
-\contentsline {subsection}{\numberline {4.3}测试结果分析}{13}{subsection.4.3}%
-\contentsline {section}{\numberline {五、}结论}{14}{section.5}%
+\contentsline {subsection}{\numberline {4.3}测试结果分析}{14}{subsection.4.3}%
+\contentsline {section}{\numberline {五、}结论}{16}{section.5}%

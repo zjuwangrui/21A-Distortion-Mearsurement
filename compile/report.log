@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (MiKTeX 25.12) (preloaded format=xelatex 2026.3.11)  16 JUL 2026 15:30
+This is XeTeX, Version 3.141592653-2.6-0.999997 (MiKTeX 25.12) (preloaded format=xelatex 2026.3.11)  17 JUL 2026 15:56
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1198,44 +1198,57 @@ Package fontspec Info:
 (fontspec)             <->"FangSong/OT:script=hani;language=dflt;"
 
  [5] [6]
-Overfull \hbox (46.60349pt too wide) in paragraph at lines 242--243
+Overfull \hbox (46.60349pt too wide) in paragraph at lines 244--245
 \TU/SimSun(0)/m/n/12.045 适 应 采 样 率 机 制。|  原 理 是 根 据 当 前 估 计 的 $\OML/cmm/m/it/12.045 f[]$ \TU/SimSun(0)/m/n/12.045 从 预 定 义 档 位 表 $\OMS/cmsy/m/n/12.045 f\OT1/cmr/m/n/12.045 1[]\OML/cmm/m/it/12.045 ; \OT1/cmr/m/n/12.045 500[]\OML/cmm/m/it/12.045 ; \OT1/cmr/m/n/12.045 250[]\OML/cmm/m/it/12.045 ; \OT1/cmr/m/n/12.045 100[]\OML/cmm/m/it/12.045 ; \OT1/cmr/m/n/12.045 50[]\OML/cmm/m/it/12.045 ; \OT1/cmr/m/n/12.045 25[]\OMS/cmsy/m/n/12.045 g$
  []
 
 [7] [8]
-Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on input line 306.
+File: resources/figure/circuit.png Graphic file (type bmp)
+<resources/figure/circuit.png>
  [9]
-Overfull \hbox (3.7389pt too wide) in paragraph at lines 345--346
+Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on input line 313.
+ [10]
+Overfull \hbox (3.7389pt too wide) in paragraph at lines 352--353
 []\TU/SimSun(0)/m/n/12.045 用 \TU/lmr/m/n/12.045 react-native-svg \TU/SimSun(0)/m/n/12.045 绘 制 一 个 基 频 周 期 的 重 建 波 形，|  公 式 $\OML/cmm/m/it/12.045 y\OT1/cmr/m/n/12.045 (\OML/cmm/m/it/12.045 t\OT1/cmr/m/n/12.045 ) = [][] \OML/cmm/m/it/12.045 H[] []\OT1/cmr/m/n/12.045 (2\OML/cmm/m/it/12.045 ^^Ykt \OT1/cmr/m/n/12.045 +
  []
 
-[10]
-Overfull \hbox (89.77881pt too wide) in paragraph at lines 386--387
+File: resources/figure/system.png Graphic file (type bmp)
+<resources/figure/system.png>
+[11]
+Overfull \hbox (54.86415pt too wide) in paragraph at lines 381--395
  [][] 
  []
 
-[11] [12] [13] [14]
-Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on input line 519.
- [15]
 
-Package caption Warning: Unused \captionsetup[table] on input line 34.
-See the caption package documentation for explanation.
+Overfull \hbox (51.26872pt too wide) in paragraph at lines 400--413
+ [][] 
+ []
 
-[16] (D:\constructing_projects\21A-Distortion-Mearsurement\compile\report.aux)
+File: resources/figure/phone.jpg Graphic file (type bmp)
+<resources/figure/phone.jpg>
+[12]
+Overfull \vbox (116.05234pt too high) has occurred while \output is active []
+
+ [13]
+File: resources/figure/50k测量/单片机显示.jpg Graphic file (type bmp)
+<resources/figure/50k测量/单片机显示.jpg>
+ [14] [15] [16]
+Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on input line 466.
+ [17] [18] (D:\constructing_projects\21A-Distortion-Mearsurement\compile\report.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2022/08/05>
  ***********
 Package rerunfilecheck Info: File `report.out' has not changed.
-(rerunfilecheck)             Checksum: F4903AD85D86ED3EB28E622612E0AC6A;5301.
+(rerunfilecheck)             Checksum: 4A3B0B1439FDEA3E7F6EB7F395FDC9BE;5163.
  ) 
 Here is how much of TeX's memory you used:
- 32822 strings out of 402987
- 687999 string characters out of 5454113
- 1502056 words of memory out of 5000000
- 61010 multiletter control sequences out of 15000+600000
- 638133 words of font info for 121 fonts, out of 8000000 for 9000
+ 32719 strings out of 402987
+ 685997 string characters out of 5454113
+ 1567056 words of memory out of 5000000
+ 60896 multiletter control sequences out of 15000+600000
+ 639670 words of font info for 126 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 102i,8n,133p,1241b,1844s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 102i,9n,133p,1241b,1844s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on D:\constructing_projects\21A-Distortion-Mearsurement\compile\report.xdv (16 pages, 255328 bytes).
+Output written on D:\constructing_projects\21A-Distortion-Mearsurement\compile\report.xdv (18 pages, 238960 bytes).

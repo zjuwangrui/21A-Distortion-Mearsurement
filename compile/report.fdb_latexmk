@@ -1,24 +1,25 @@
 # Fdb version 4
-["makeindex compile/report.idx"] 1784186968.50183 "compile/report.idx" "compile/report.ind" "compile/report" 1784187004.68672 0
-  "compile/report.idx" 1784187002.87425 0 d41d8cd98f00b204e9800998ecf8427e "xelatex"
+["makeindex compile/report.idx"] 1784186968.50183 "compile/report.idx" "compile/report.ind" "compile/report" 1784274978.86216 0
+  "compile/report.idx" 1784274973.12545 0 d41d8cd98f00b204e9800998ecf8427e "xelatex"
   (generated)
   "compile/report.ilg"
   "compile/report.ind"
   (rewritten before read)
-["xdvipdfmx"] 1784187004.18383 "compile/report.xdv" "compile/report.pdf" "compile/report" 1784187004.72914 0
-  "compile/report.xdv" 1784187003.72565 255328 faa719cf89af47bdd5955275b4ca278c "xelatex"
+["xdvipdfmx"] 1784274974.77326 "compile/report.xdv" "compile/report.pdf" "compile/report" 1784274978.93054 0
+  "compile/report.xdv" 1784274974.1589 238960 42d0e39877cd354bd197fbecaae74cd7 "xelatex"
   (generated)
   "compile/report.pdf"
   (rewritten before read)
-["xelatex"] 1784187002.0747 "d:/constructing_projects/21A-Distortion-Mearsurement/report.tex" "compile/report.xdv" "report" 1784187004.68755 0
+["xelatex"] 1784274972.2723 "d:/constructing_projects/21A-Distortion-Mearsurement/report.tex" "compile/report.xdv" "report" 1784274978.86402 0
   "C:/Users/lenovo/AppData/Local/MiKTeX/miktex/data/le/xetex/xelatex.fmt" 1773212165.49064 27165494 6331bb68c4c3e70f1cd0dac2b94cbea9 ""
   "C:/WINDOWS/Fonts/msyh.ttc" 1737600631.49247 19704352 fa04b86eb9c632ef04217c3e43d81c4d ""
-  "D:/constructing_projects/21A-Distortion-Mearsurement/compile/report.aux" 1784187003.72305 6417 6ac8270fd06d4872818520feb5d794db ""
-  "D:/constructing_projects/21A-Distortion-Mearsurement/compile/report.out" 1784187003.72458 5301 f4903ad85d86ed3eb28e622612e0ac6a ""
-  "D:/constructing_projects/21A-Distortion-Mearsurement/compile/report.toc" 1784187003.72565 3609 6e9dd4e571f94fdcbce1334a1d441382 ""
+  "D:/constructing_projects/21A-Distortion-Mearsurement/compile/report.aux" 1784274974.1559 6913 27320e423892734b9777a65801fed0c9 ""
+  "D:/constructing_projects/21A-Distortion-Mearsurement/compile/report.out" 1784274974.1579 5163 4a3b0b1439fdea3e7f6eb7f395fdc9be ""
+  "D:/constructing_projects/21A-Distortion-Mearsurement/compile/report.toc" 1784274974.1589 3512 a371467bdde4966949f4760c4837ac8c ""
   "D:/program/MiKTex/fonts/tfm/adobe/zapfding/pzdr.tfm" 1136743454 1528 f853c4d1b4e0550255e02831fdc8496f ""
   "D:/program/MiKTex/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1233951848 1004 54797486969f23fa377b128694d548df ""
   "D:/program/MiKTex/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1233951848 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
+  "D:/program/MiKTex/fonts/tfm/public/amsfonts/cmextra/cmex9.tfm" 1234365220 996 a18840b13b499c08ac2de96a99eda4bc ""
   "D:/program/MiKTex/fonts/tfm/public/amsfonts/symbols/msam10.tfm" 1233951854 916 f87d7c45f9c908e672703b83b72241a3 ""
   "D:/program/MiKTex/fonts/tfm/public/amsfonts/symbols/msam5.tfm" 1233951854 924 9904cf1d39e9767e7a3622f2a125a565 ""
   "D:/program/MiKTex/fonts/tfm/public/amsfonts/symbols/msam7.tfm" 1233951854 928 2dc8d444221b7a635bb58038579b861a ""
@@ -30,13 +31,16 @@
   "D:/program/MiKTex/fonts/tfm/public/cm/cmmi12.tfm" 1136765053 1524 4414a8315f39513458b80dfc63bff03a ""
   "D:/program/MiKTex/fonts/tfm/public/cm/cmmi6.tfm" 1136765053 1512 f21f83efb36853c0b70002322c1ab3ad ""
   "D:/program/MiKTex/fonts/tfm/public/cm/cmmi8.tfm" 1136765053 1520 eccf95517727cb11801f4f1aee3a21b4 ""
+  "D:/program/MiKTex/fonts/tfm/public/cm/cmmi9.tfm" 1136765053 1524 d89e2d087a9828407a196f428428ef4a ""
   "D:/program/MiKTex/fonts/tfm/public/cm/cmr10.tfm" 1136765053 1296 45809c5a464d5f32c8f98ba97c1bb47f ""
   "D:/program/MiKTex/fonts/tfm/public/cm/cmr12.tfm" 1136765053 1288 655e228510b4c2a1abe905c368440826 ""
   "D:/program/MiKTex/fonts/tfm/public/cm/cmr6.tfm" 1136765053 1300 b62933e007d01cfd073f79b963c01526 ""
   "D:/program/MiKTex/fonts/tfm/public/cm/cmr8.tfm" 1136765053 1292 21c1c5bfeaebccffdb478fd231a0997d ""
+  "D:/program/MiKTex/fonts/tfm/public/cm/cmr9.tfm" 1136765053 1292 6b21b9c2c7bebb38aa2273f7ca0fb3af ""
   "D:/program/MiKTex/fonts/tfm/public/cm/cmsy10.tfm" 1136765053 1124 6c73e740cf17375f03eec0ee63599741 ""
   "D:/program/MiKTex/fonts/tfm/public/cm/cmsy6.tfm" 1136765053 1116 933a60c408fc0a863a92debe84b2d294 ""
   "D:/program/MiKTex/fonts/tfm/public/cm/cmsy8.tfm" 1136765053 1120 8b7d695260f3cff42e636090a8002094 ""
+  "D:/program/MiKTex/fonts/tfm/public/cm/cmsy9.tfm" 1136765053 1116 25a7bf822c58caf309a702ef79f4afbb ""
   "D:/program/MiKTex/tex/generic/bigintcalc/bigintcalc.sty" 1576433602 40635 c40361e206be584d448876bba8a64a3b ""
   "D:/program/MiKTex/tex/generic/bitset/bitset.sty" 1575926576 33961 6b5c75130e435b2bfdb9f480a09a39f9 ""
   "D:/program/MiKTex/tex/generic/gettitlestring/gettitlestring.sty" 1576433666 8371 9d55b8bd010bc717624922fb3477d92e ""
@@ -209,11 +213,15 @@
   "D:/program/MiKTex/tex/xelatex/xecjk/xeCJK.cfg" 1659726270 408 7369c27beaa819c5f46de3795b22ee3e ""
   "D:/program/MiKTex/tex/xelatex/xecjk/xeCJK.sty" 1659726270 183137 ed372550124703b2b73cbcc0b47cb20f ""
   "D:/program/MiKTex/tex/xelatex/xecjk/xeCJKfntef.sty" 1659726270 39577 b470f8a1dbecc9c45c9bf05ca7db9188 ""
-  "compile/report.aux" 1784187003.72305 6417 6ac8270fd06d4872818520feb5d794db "xelatex"
+  "compile/report.aux" 1784274974.1559 6913 27320e423892734b9777a65801fed0c9 "xelatex"
   "compile/report.ind" 1784186968.76281 0 d41d8cd98f00b204e9800998ecf8427e "makeindex compile/report.idx"
-  "compile/report.out" 1784187003.72458 5301 f4903ad85d86ed3eb28e622612e0ac6a "xelatex"
-  "compile/report.toc" 1784187003.72565 3609 6e9dd4e571f94fdcbce1334a1d441382 "xelatex"
-  "d:/constructing_projects/21A-Distortion-Mearsurement/report.tex" 1784187001.18089 30176 331ec0943092cf3d0696b0f2d7294682 ""
+  "compile/report.out" 1784274974.1579 5163 4a3b0b1439fdea3e7f6eb7f395fdc9be "xelatex"
+  "compile/report.toc" 1784274974.1589 3512 a371467bdde4966949f4760c4837ac8c "xelatex"
+  "d:/constructing_projects/21A-Distortion-Mearsurement/report.tex" 1784274971.17665 26832 798c582b82110787d285539d62e942ca ""
+  "resources/figure/50k测量/单片机显示.jpg" 1784183443.82573 177735 f80e1b3d3f3086096d4a165f01231790 ""
+  "resources/figure/circuit.png" 1784178698 210617 a26409977432cc3e73bf5a6a898af6d0 ""
+  "resources/figure/phone.jpg" 1784274551.95575 477276 f42e555059d0cec9cfe364670388dca5 ""
+  "resources/figure/system.png" 1784187376.12887 920059 57d98d971e12e46dae68d641517abb38 ""
   (generated)
   "compile/report.aux"
   "compile/report.idx"
