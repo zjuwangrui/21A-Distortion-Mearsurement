@@ -1,6 +1,6 @@
 LTspice 24.1.10 for Windows
 Circuit: D:\constructing_projects\21A-Distortion-Mearsurement\hardware\stimulation\filter.net
-Start Time: Wed Jul 15 09:44:11 2026
+Start Time: Fri Jul 17 16:57:16 2026
 solver = Normal
 Maximum thread count: 16
 tnom = 27
@@ -29,7 +29,7 @@ Gmin = 2.70769e-13
 Gmin = 0
 Gmin stepping succeeded in finding the operating point.
 
-Total elapsed time: 0.067 seconds.
+Total elapsed time: 0.274 seconds.
 
 Files loaded:
 D:\constructing_projects\21A-Distortion-Mearsurement\hardware\stimulation\filter.net
